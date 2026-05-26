@@ -1,4 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
-export class CommentsService {}
+export class CommentsService {
+    private comments = [
+        {id:1,postId:1,content:"뭐하냐",authorId:1,authorName:"test1"},
+        {id:2,postId:1,content:"정지",authorId:2,authorName:"admin1"},
+        {id:3,postId:2,content:"흠",authorId:1,authorName:"test1"},
+    ];
+    findOne(id:number) {
+        const comment = this.comments.find(comment => comment.id === id)
+
+        if (!comment) {
+            throw new NotFoundException("댓글이 없습니다")
+        }
+        return comment;
+    }
+    findAll() {
+        return this.comments
+    }
+    findByPostId(postId: number) {
+        const commentFilter = this.comments.filter(comment => comment.postId === postId)
+
+        return commentFilter
+    }
+}

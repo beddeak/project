@@ -38,6 +38,7 @@ export class PostsService {
         this.posts = ([...this.posts, newPost])
         return newPost
     }
+<<<<<<< HEAD
     edit(id:number,title:string,content:string) {
         const post = this.findOne(id)
 
@@ -63,4 +64,7 @@ export class PostsService {
         this.posts = del
         return post;
     }
+=======
+
+>>>>>>> 5c31fd17820cf123bbb01958b88429dd848236bd
 }
