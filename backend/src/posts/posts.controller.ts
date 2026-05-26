@@ -13,4 +13,5 @@ export class PostsController {
         const postId = Number(id)
         return this.postsService.findOne(postId);
     }
+    @Get()
 }
