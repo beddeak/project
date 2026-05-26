@@ -1,0 +1,108 @@
+.Create-Page,
+.Edit-Page {
+  min-height: 100vh;
+  padding: 48px 20px;
+  color: #e8edf5;
+}
+
+.write-page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px;
+  border: 1px solid #263244;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #151f2e 0%, #101824 100%);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  box-sizing: border-box;
+}
+
+.write-page::before {
+  content: "Post Editor";
+  display: block;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #263244;
+  color: #8ba4c7;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.set-title,
+.set-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.set-content {
+  margin-top: 20px;
+}
+
+.set-title label,
+.set-content label {
+  font-size: 15px;
+  font-weight: 800;
+  color: #dce6f4;
+}
+
+.set-title input,
+.set-content textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #31415a;
+  border-radius: 8px;
+  background: #0d1420;
+  color: #eef3fa;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.set-title input {
+  height: 44px;
+}
+
+.set-content textarea {
+  min-height: 220px;
+  resize: vertical;
+}
+
+.write-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.write-actions button {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid #4f8dff;
+  border-radius: 8px;
+  background: #2f6fed;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.write-actions button:hover {
+  background: #215bd0;
+}
+
+.set-title input:focus,
+.set-content textarea:focus {
+  outline: none;
+  border-color: #6aa1ff;
+  box-shadow: 0 0 0 3px rgba(79, 141, 255, 0.18);
+}
+
+@media (max-width: 640px) {
+  .Create-Page,
+  .Edit-Page {
+    padding: 28px 12px;
+  }
+
+  .write-page {
+    padding: 20px;
+  }
+}
