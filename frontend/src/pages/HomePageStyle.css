@@ -1,0 +1,127 @@
+.HomePage {
+  min-height: 100vh;
+  padding: 48px 20px;
+  background:
+    linear-gradient(180deg, #f4f7fb 0%, #ffffff 42%),
+    #000000;
+  color: #171f2a;
+}
+
+.login-states {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  border: 1px solid #cfd8e3;
+  border-top: 3px solid #1f5fbf;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 32px rgba(31, 45, 61, 0.08);
+  overflow: hidden;
+}
+
+.login-states::before {
+  content: "COMMUNITY MAIN";
+  display: block;
+  padding: 14px 18px;
+  border-bottom: 1px solid #d8e0ea;
+  background: linear-gradient(180deg, #ffffff 0%, #eef4fb 100%);
+  color: #174b9a;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.login-states > div {
+  padding: 18px;
+  border-bottom: 1px solid #e6ebf1;
+}
+
+.login-states > div:last-child {
+  border-bottom: 0;
+}
+
+.login-states p {
+  margin: 6px 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #263241;
+}
+
+.login-states p:first-child {
+  font-weight: 800;
+  color: #0f3f88;
+}
+
+.login-states a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  margin: 4px 8px 4px 0;
+  padding: 0 14px;
+  border: 1px solid #b8c7da;
+  border-radius: 6px;
+  background: #f8fbff;
+  color: #143d7d;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.login-states a:hover {
+  border-color: #1f5fbf;
+  background: #1f5fbf;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.posts {
+  background: #fbfcfe;
+}
+
+.posts a {
+  width: 100%;
+  min-height: 46px;
+  border-color: #1f5fbf;
+  background: #1f5fbf;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.posts a:hover {
+  background: #174b9a;
+}
+
+.myposts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.myposts a {
+  flex: 1 1 160px;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .HomePage {
+    padding: 24px 12px;
+  }
+
+  .login-states::before {
+    padding: 12px 14px;
+  }
+
+  .login-states > div {
+    padding: 14px;
+  }
+
+  .login-states a {
+    width: 100%;
+    margin-right: 0;
+  }
+}
