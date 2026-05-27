@@ -43,7 +43,7 @@ export class CommentsService {
             if (item.id !== id) {
                 return item
             } else {
-                return {...comment,content}
+                return {...item,content}
             }
         })
         this.comments = edited

@@ -1,9 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
 
+type Post = {
+    id: number;
+    title: string;
+    content: string;
+    authorId: number;
+    authorName: string;
+    likedUserIds: number[];
+}
+
 @Injectable()
 export class PostsService {
-    private posts = [
+    private posts: Post[] = [
         {id:1,title:"안녕하시지",content:"유니유니입니다", authorId:1,authorName:"test1",likedUserIds:[]},
         {id:2,title:"반갑꼬리", content:"헤비가 누군데?", authorId:2, authorName:"admin1",likedUserIds:[]},
         {id:3,title:"김찬호 방송켜라",content:"김찬호 무자식", authorId:1, authorName:"test1",likedUserIds:[]},
@@ -43,9 +52,9 @@ export class PostsService {
 
         const edited = this.posts.map(item => {
             if (item.id !== id) {
-                return post;
+                return item;
             } else {
-                return {...post,title,content}
+                return {...item,title,content}
             }
         })
         this.posts = edited;
@@ -62,6 +71,11 @@ export class PostsService {
         const del = this.posts.filter(item => item.id !== id)
         this.posts = del
         return post;
+    }
+    toggleLike(postId:number,userId:number) {
+        const post = this.findOne(postId);
+
+        const alreadyLiked = post.likedUserIds.includes(userId)
     }
 
 }
