@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { Body, Controller, Get, Param, Patch, Post,Delete } from '@nestjs/common';
-=======
-import { Controller, Get, Param } from '@nestjs/common';
->>>>>>> 5c31fd17820cf123bbb01958b88429dd848236bd
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -17,7 +13,6 @@ export class PostsController {
         const postId = Number(id)
         return this.postsService.findOne(postId);
     }
-<<<<<<< HEAD
     @Post()
     create(@Body() body: any) {
         return this.postsService.create(
@@ -44,7 +39,4 @@ export class PostsController {
 
         return this.postsService.remove(postId)
     }
-=======
-    @Get()
->>>>>>> 5c31fd17820cf123bbb01958b88429dd848236bd
 }
