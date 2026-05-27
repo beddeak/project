@@ -75,7 +75,10 @@ export class PostsService {
     toggleLike(postId:number,userId:number) {
         const post = this.findOne(postId);
 
-        const alreadyLiked = post.likedUserIds.includes(userId)
+        const alreadyLiked = post.likedUserIds.includes(userId);
+        const newLikedUserId = alreadyLiked
+        ? post.likedUserIds.filter(id => id !== userId)
+        : [...post.likedUserIds, userId];
     }
 
 }
