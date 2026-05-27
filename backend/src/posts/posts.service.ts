@@ -76,9 +76,25 @@ export class PostsService {
         const post = this.findOne(postId);
 
         const alreadyLiked = post.likedUserIds.includes(userId);
-        const newLikedUserId = alreadyLiked
+        const newLikedUserIds = alreadyLiked
         ? post.likedUserIds.filter(id => id !== userId)
         : [...post.likedUserIds, userId];
+
+        const updatedPosts = this.posts.map(item => {
+            if (item.id !== postId) {
+                return item;
+            }
+
+            return {
+                ...item,
+                likedUserIds: newLikedUserIds
+            }
+        })
+        this.posts = updatedPosts
+        return {
+            ...post,
+            likedUserIds: newLikedUserIds
+        }
     }
 
 }
