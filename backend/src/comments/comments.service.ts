@@ -23,4 +23,39 @@ export class CommentsService {
 
         return commentFilter
     }
+    create(postId:number,content:string,authorId:number,authorName:string) {
+        const ids = this.comments.map(comment => comment.id)
+        const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1
+
+        const newComment = {
+            id: newId,
+            postId,
+            content,
+            authorId,
+            authorName
+        }
+        this.comments = ([...this.comments,newComment])
+        return newComment
+    }
+    edit(id: number, content:string) {
+        const comment = this.findOne(id)
+        const edited = this.comments.map(item => {
+            if (item.id !== id) {
+                return item
+            } else {
+                return {...comment,content}
+            }
+        })
+        this.comments = edited
+        return {
+            ...comment,
+            content
+        }
+    }
+    remove(id: number) {
+        const comment = this.findOne(id)
+        const del = this.comments.filter(comment => comment.id !== id)
+       this.comments = del
+       return comment
+    }
 }

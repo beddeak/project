@@ -14,8 +14,6 @@ import { PostContextProvider } from "./context/PostContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import { CommentContextProvider } from "./context/CommentContext";
 
-
-
 function App() {
   return (
     <BrowserRouter>
@@ -28,10 +26,10 @@ function App() {
         <Route path="/signup" element={<SignupPage />}/>
         <Route path="/posts" element={<PostlistPage />}/>
         <Route path="/posts/:id/detail" element={<PostDetailPage />}/>
-        <Route path="/posts/write" element={<ProtectRoute><PostCreatePage/></ProtectRoute>}/> {/* 나중엔 user정보로 쓰기 */}
+        <Route path="/posts/write" element={<ProtectRoute><PostCreatePage/></ProtectRoute>}/>
         <Route path="/posts/:id/edit" element={<ProtectRoute><PostEditPage /></ProtectRoute>}/>
         <Route path="/mypage/posts" element={<ProtectRoute><MyPostsPage/></ProtectRoute>}/>
-        <Route path="/admin" element={<AdminRoute><AdminDashboardPage/></AdminRoute>}/> {/* 나중엔 user정보로 쓰기 */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboardPage/></AdminRoute>}/>
       </Routes>
       </CommentContextProvider>
       </PostContextProvider>

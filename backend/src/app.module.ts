@@ -16,10 +16,10 @@ import { LikesModule } from './likes/likes.module';
   }),
 
   TypeOrmModule.forRoot({
-    type: 'sqlite',
-    database: 'database.sqlite',
-    autoLoadEntities: true,
-    synchronize: true,
+  type: 'better-sqlite3',
+  database: 'database.sqlite',
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  synchronize: true,
   }),
 
   AuthModule,
