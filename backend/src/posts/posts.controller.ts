@@ -39,4 +39,13 @@ export class PostsController {
 
         return this.postsService.remove(postId)
     }
+    @Patch(':id/like')
+    toggleLike(@Param('id') id: string, @Body() body: any) {
+        const postId = Number(id)
+
+        return this.postsService.toggleLike(
+            postId,
+            body.userId
+        )
+    }
 }
