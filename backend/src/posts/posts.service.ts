@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
 
 type Post = {
@@ -73,6 +73,9 @@ export class PostsService {
         return post;
     }
     toggleLike(postId:number,userId:number) {
+        if (typeof userId !== "number" || Number.isNaN(userId)) {
+            throw new BadRequestException("계정 관련으로 오류가 발생하였습니다")
+        }
         const post = this.findOne(postId);
 
         const alreadyLiked = post.likedUserIds.includes(userId);
