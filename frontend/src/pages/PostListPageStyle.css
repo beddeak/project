@@ -86,6 +86,27 @@
 .post-content p {
   margin: 0;
 }
+.post-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.write-button {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #222;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.write-button:hover {
+    background-color: #f1f1f1;
+}
 
 @media (max-width: 640px) {
   .post-list-page {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post,Delete } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post,Delete, BadRequestException } from '@nestjs/common';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -15,6 +15,9 @@ export class PostsController {
     }
     @Post()
     create(@Body() body: any) {
+        if (!body?.title || !body?.content || body?.authorId === undefined) {
+            throw new BadRequestException("필수 값이 없습니다")
+        }
         return this.postsService.create(
             body.title,
             body.content,

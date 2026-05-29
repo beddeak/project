@@ -11,9 +11,9 @@ type Post = {
 
 type PostContextType = {
     posts: Post[]
-    addPost: (title:string, content:string, authorId:number, authorName:string) => void;
-    editPost: (id:number, title:string, content:string) => void;
-    deletePost: (id:number) => void;
+    addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<void>;
+    editPost: (id:number, title:string, content:string) => Promise<void>;
+    deletePost: (id:number) => Promise<void>;
     toggleLike: (postId:number,userId:number) => void;
 }
 
@@ -32,34 +32,66 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
 
         fetchPosts();
     }, []);
+    
+     const addPost = async (
+        title:string,
+        content:string,
+        authorId:number,
+        authorName: string
+     ) => {
+        const response = await fetch("http://localhost:3000/posts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title,
+                content,
+                authorId,
+                authorName
+            })
+        });
+        const newPost = await response.json();
 
-     const addPost = (title:string,content:string,authorId:number,authorName:string) => {
-        const Ids = posts.map(post => post.id)
-        const newId = Ids.length === 0 ? 1 : Math.max(...Ids) + 1
-        const newPost = {
-            id:newId,
-            title,
-            content,
-            authorId,
-            authorName,
-            likedUserIds: []
-        }
-        setPosts([...posts, newPost])
+        setPosts(prevPosts => [...prevPosts, newPost]);
+     };
+    const editPost = async (
+        id:number,
+        title:string,
+        content:string
+    ) => {
+        const response = await fetch(`http://localhost:3000/posts/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title,
+                content
+            })
+        });
+        const edit = await response.json();
+
+        setPosts(prevPost => prevPost.map(post => post.id === id ? edit : post))
     }
-    const editPost = (id:number,title:string,content:string) => {
-        const edited = posts.map(post => {
-            if (post.id !== id) {
-                return post;
-            } else {
-                return {...post, title:title,content:content}
-            }
+    const deletePost = async (
+        id:number
+    ) => {
+        const response = await fetch(`http://localhost:3000/posts/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id
+            })
+        });
+        if (!response) {
+            alert("글 삭제에 실패했습니다");
+            return;
         }
-        )
-        setPosts(edited);
-    }
-    const deletePost = (id:number) => {
-        const del = posts.filter(post => post.id !== id)
-        setPosts(del)
+
+        setPosts(prevPost => prevPost.filter(post => post.id !== id))
     }
     const toggleLike = (postId:number, userId:number) => {
         const like = posts.map(post => {

@@ -10,6 +10,12 @@ function PostListPage() {
 
     return (
         <div className="post-list-page">
+            <div className="post-list-header">
+                    <h1>글 목록</h1>
+                        <Link className="write-button" to="/posts/write">
+                            글 쓰기
+                        </Link>
+            </div>
             {posts.length === 0 ? (
                 <p>작성된 글이 없습니다</p>
             ) : (

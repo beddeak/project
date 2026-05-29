@@ -20,9 +20,9 @@ function PostCreatePage() {
         return <Navigate to="/login" replace />
     }
 
-    const handleWrite = (title: string, content: string,) => {
-        addPost(title, content,user.id,user.name);
-        navigate("/posts");
+    const handleWrite = async (title: string, content: string,) => {
+        await addPost(title, content,user.id, user.name);
+        navigate("/posts")
     };
 
     return (
