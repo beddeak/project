@@ -14,7 +14,7 @@ type PostContextType = {
     addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<void>;
     editPost: (id:number, title:string, content:string) => Promise<void>;
     deletePost: (id:number) => Promise<void>;
-    toggleLike: (postId:number,userId:number) => void;
+    toggleLike: (postId:number,userId:number) => Promise<void>;
 }
 
 const PostContext = createContext<PostContextType | null>(null)
@@ -78,41 +78,33 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
         id:number
     ) => {
         const response = await fetch(`http://localhost:3000/posts/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                id
-            })
+            method: "DELETE"
         });
-        if (!response) {
+        if (!response.ok) {
             alert("글 삭제에 실패했습니다");
             return;
         }
 
         setPosts(prevPost => prevPost.filter(post => post.id !== id))
     }
-    const toggleLike = (postId:number, userId:number) => {
-        const like = posts.map(post => {
-            if (post.id !== postId) {
-                return post;
-            }
-            const alreadyLiked = post.likedUserIds.includes(userId);
-
-            if (alreadyLiked) {
-                return {
-                ...post,
-                likedUserIds: post.likedUserIds.filter(id => id !== userId)
-                }
-            } else {
-                return {
-                    ...post,
-                    likedUserIds: [...post.likedUserIds, userId]
-                }
-            }
-        })
-        setPosts(like)
+    const toggleLike = async (
+        postId:number,
+        userId:number
+    ) => {
+        const response = await fetch(`http://localhost:3000/posts/${postId}/like`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                userId
+            })
+        });
+        const updatedPost = await response.json();
+        setPosts(prevPost => prevPost.map(post => (
+            post.id === postId ? updatedPost : post
+        )
+        ));
     }
     return (
         <PostContext.Provider value={{posts,editPost,addPost,deletePost,toggleLike}}>
