@@ -1,0 +1,17 @@
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css); /*구글 서버에서 나눔고딕 폰트를 가져옴,*/
+*{font-family: 'Nanum Gothic', serif;} /*serif 이 명령어는 나눔고딕 글씨체가 없을 경우 이 글씨체로 대체하라는 명령어*/
+
+#pcsCalendar {width: 250px; height: 250x; border: 1px solid black;} /*테두리는 검정색 테두리를 쓰겟다*/
+#pcsCalendar #header {height: 50px; line-height: 50px; text-align: center; font-size: 18px; font-weight: bold;} /*헤더 부분 지정*/
+#pcsCalendar .button {color: #000; text-decoration: none;} /*버튼 기능 구현, 텍스트 데코레이션 none은 밑줄 제거*/
+
+#pcsCalendar table {width: 250px; height: 200px;} 
+#pcsCalendar caption {display: none;} /*caption은 표의 제목 숨감*/
+
+#pcsCalendar .sun {text-align: center; color: red;}
+#pcsCalendar .mon {text-align: center;}
+#pcsCalendar .tue {text-align: center;}
+#pcsCalendar .wed {text-align: center;}
+#pcsCalendar .thu {text-align: center;}
+#pcsCalendar .fri {text-align: center;}
+#pcsCalendar .sat {text-align: center; color: blue;}

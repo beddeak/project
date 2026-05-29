@@ -16,7 +16,7 @@ export class PostsService {
         {id:1,title:"안녕하시지",content:"유니유니입니다", authorId:1,authorName:"test1",likedUserIds:[]},
         {id:2,title:"반갑꼬리", content:"헤비가 누군데?", authorId:2, authorName:"admin1",likedUserIds:[]},
         {id:3,title:"김찬호 방송켜라",content:"김찬호 무자식", authorId:1, authorName:"test1",likedUserIds:[]},
-        {id:4,title:"정상길",content:"정실", authorId:3,authorName:"test2",likedUserIds:[]},
+        {id:4,title:"정상길도파",content:"정실", authorId:3,authorName:"test2",likedUserIds:[]},
         {id:5,title:"귀염둥이카페손인욱",content:"오고곡", authorId:4, authorName:"test3",likedUserIds:[]}
     ];
     findOne(id: number) {
@@ -99,5 +99,4 @@ export class PostsService {
             likedUserIds: newLikedUserIds
         }
     }
-
 }
