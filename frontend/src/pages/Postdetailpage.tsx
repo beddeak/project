@@ -53,7 +53,7 @@ function PostDetailPage() {
         await toggleLike(postId,user.id);
     }
 
-    const handleAddComments = () => {
+    const handleAddComments = async () => {
         if (!user) {
             return alert("회원가입 혹은 로그인 부탁드립니다");
         }
@@ -62,7 +62,7 @@ function PostDetailPage() {
             return alert("댓글을 입력하세요");
         }
 
-        addComment(postId, commentText.trim(), user.id, user.name);
+        await addComment(postId, commentText.trim(), user.id, user.name);
         setCommentText("");
     };
 
@@ -71,14 +71,14 @@ function PostDetailPage() {
         setEditCommentText(content);
     };
 
-    const handleEditComment = () => {
+    const handleEditComment = async () => {
         if (editingCommentId === null) return;
 
         if (!editCommentText.trim()) {
             return alert("댓글을 입력하세요");
         }
 
-        editComment(editingCommentId, editCommentText.trim());
+        await editComment(editingCommentId, editCommentText.trim());
         setEditingCommentId(null);
         setEditCommentText("");
     };
@@ -88,10 +88,10 @@ function PostDetailPage() {
         setEditCommentText("");
     };
 
-    const handleDeleteComment = (id: number) => {
+    const handleDeleteComment = async (id: number) => {
         if (!confirm("댓글을 삭제하시겠습니까?")) return;
 
-        deleteComment(id);
+        await deleteComment(id);
     };
 
     return (
@@ -109,7 +109,7 @@ function PostDetailPage() {
             </div>
             <div className="detail-like">
                 <button onClick={handleLike}>
-                    {isLiked ? "좋아요" : "좋아요"} {likeCount}</button>
+                    {isLiked ? "❤️좋아요" : "♡좋아요"} {likeCount}</button>
             </div>
             {canManage && (
                 <div className="detail-actions">
