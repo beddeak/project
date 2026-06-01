@@ -22,8 +22,8 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
     const [comments,setComments] = useState<Comment[]>([])
     useEffect(() => {
         const fetchComments = async () => {
-            const respone = await fetch("http://localhost:3000/comments")
-            const data = await respone.json()
+            const response = await fetch("http://localhost:3000/comments")
+            const data = await response.json()
 
             setComments(data);
         }
@@ -36,7 +36,7 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
         authorId:number,
         authorName:string
     ) => {
-        const respone = await fetch("http://localhost:3000/comments", {
+        const response = await fetch("http://localhost:3000/comments", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -48,27 +48,40 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
                 authorName
             })
         });
-        const newComment = await respone.json();
+        const newComment = await response.json();
 
-        setComments(prevComment => [prevComment, newComment]);
+        setComments(prevComment => [...prevComment, newComment]);
     }
 
-    const editComment = (id:number, content:string) => {
-        const edited = comments.map(comment => {
-            if (comment.id !== id) {
-                return comment;
-            } else {
-                return {...comment,content:content}
-            }
-        })
-        setComments(edited);
-    }
+    const editComment = async (
+        id:number,
+        content:string
+    ) => {
+        const response = await fetch(`http://localhost:3000/comments/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                content
+            })
+        });
+        const edit = await response.json();
 
-        const deleteComment = (id:number) => {
-        const filtered = comments.filter(comment => comment.id !== id);
-        setComments(filtered)
+        setComments(prevComment => prevComment.map(comments => comments.id === id ? edit : comments))
     }
-
+    const deleteComment = async (
+        id:number
+    ) => {
+        const response = await fetch(`http://localhost:3000/comments/${id}`, {
+            method: "DELETE"
+        });
+        if (!response.ok) {
+            alert("댓글 삭제에 실패했습니다")
+            return
+        }
+        setComments(prevComment => prevComment.filter(comments => comments.id !== id))
+    }
     return (
 
         <CommentContext.Provider value={{comments,addComment,deleteComment,editComment}}>
