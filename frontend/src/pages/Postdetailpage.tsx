@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import PostContext from "../context/PostContext";
-import CommentContext from "../context/CommentContext";
+import CommentContext from "../context/commentContext";
 import AuthContext from "../context/AuthContext";
 import "./PostDetailPageStyle.css";
 
@@ -19,7 +19,7 @@ function PostDetailPage() {
 
     if (!authcontext) return <p>오류가 발생하였습니다</p>;
     if (!context) return <p>글을 찾을수가없습니다</p>;
-    if (!commentcontext) return <p>오가 발생하였습니다</p>;
+    if (!commentcontext) return <p>오류가 발생하였습니다</p>;
 
     const { user } = authcontext;
     const { posts, deletePost, toggleLike } = context;
@@ -40,17 +40,17 @@ function PostDetailPage() {
     const likeCount = post.likedUserIds.length;
     const isLiked = user ? post.likedUserIds.includes(user.id) : false;
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!confirm("글을 삭제하시겠습니까?")) return;
 
-        deletePost(postId);
+        await deletePost(postId);
         navigate("/posts");
     };
-    const handleLike = () => {
+    const handleLike = async () => {
         if (!user) {
             return alert("회원가입 혹은 로그인 부탁드립니다")
         }
-        toggleLike(postId,user.id);
+        await toggleLike(postId,user.id);
     }
 
     const handleAddComments = () => {

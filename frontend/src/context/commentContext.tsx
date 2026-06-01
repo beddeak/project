@@ -1,4 +1,4 @@
-import { createContext,useState } from "react";
+import { createContext,useState,useEffect } from "react";
 type Comment = {
     id:number,
     postId:number,
@@ -9,10 +9,9 @@ type Comment = {
 
 type CommentContextType = {
     comments: Comment[]; 
-    addComment: (postId:number,content:string,authorId:number,authorName:string) => void;
-    deleteComment: (id:number) => void;
-
-    editComment: (id:number, content:string) => void;
+    addComment: (postId:number,content:string,authorId:number,authorName:string) => Promise<void>;
+    deleteComment: (id:number) => Promise<void>;
+    editComment: (id:number, content:string) => Promise<void>;
 
 }
 
@@ -20,23 +19,38 @@ const CommentContext = createContext<CommentContextType | null>(null)
 
 
 export function CommentContextProvider({children}: {children: React.ReactNode}) {
-    const [comments,setComments] = useState<Comment[]>([
-        {id:1,postId:1,content:"뭐하냐",authorId:1,authorName:"test1"},
-        {id:2,postId:1,content:"정지",authorId:2,authorName:"admin1"},
-        {id:3,postId:2,content:"흠",authorId:1,authorName:"test1"},
-    ])
-    const addComment = (postId:number,content:string,authorId:number,authorName:string) => {
-        const Ids = comments.map(comment => comment.id)
-        const newId = Ids.length === 0 ? 1 : Math.max(...Ids) + 1;
-        const newComment = {
-            id: newId,
-            postId,
-            content,
-            authorId,
-            authorName
-        };
+    const [comments,setComments] = useState<Comment[]>([])
+    useEffect(() => {
+        const fetchComments = async () => {
+            const respone = await fetch("http://localhost:3000/comments")
+            const data = await respone.json()
 
-        setComments([...comments,newComment])
+            setComments(data);
+        }
+
+        fetchComments();
+    }, []);
+    const addComment = async (
+        postId:number,
+        content:string,
+        authorId:number,
+        authorName:string
+    ) => {
+        const respone = await fetch("http://localhost:3000/comments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                postId,
+                content,
+                authorId,
+                authorName
+            })
+        });
+        const newComment = await respone.json();
+
+        setComments(prevComment => [prevComment, newComment]);
     }
 
     const editComment = (id:number, content:string) => {

@@ -13,8 +13,8 @@ function PostEditPage() {
     const {id} = useParams();
     const postId = Number(id);
     const post = posts.find(post => post.id === postId);
-    const handleEdit = (title:string, content:string) => {
-        editPost(postId,title,content);
+    const handleEdit = async (title:string, content:string) => {
+        await editPost(postId,title,content);
         navigate(`/posts/${postId}/detail`)
     }
 

@@ -12,7 +12,7 @@ import PostCreatePage from "./pages/Postcreatepage";
 import AdminRoute from "./Route/AdminRoute";
 import { PostContextProvider } from "./context/PostContext";
 import { AuthContextProvider } from "./context/AuthContext";
-import { CommentContextProvider } from "./context/CommentContext";
+import { CommentContextProvider } from "./context/commentContext";
 
 function App() {
   return (
