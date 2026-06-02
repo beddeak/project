@@ -1,26 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
-
-type Post = {
-    id: number;
-    title: string;
-    content: string;
-    authorId: number;
-    authorName: string;
-    likedUserIds: number[];
-}
+import { Repository } from 'typeorm';
+import { PostEntity } from './posts.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PostsService {
-    private posts: Post[] = [
-        {id:1,title:"안녕하시지",content:"유니유니입니다", authorId:1,authorName:"test1",likedUserIds:[]},
-        {id:2,title:"반갑꼬리", content:"헤비가 누군데?", authorId:2, authorName:"admin1",likedUserIds:[]},
-        {id:3,title:"김찬호 방송켜라",content:"김찬호 무자식", authorId:1, authorName:"test1",likedUserIds:[]},
-        {id:4,title:"정상길도파",content:"정실", authorId:3,authorName:"test2",likedUserIds:[]},
-        {id:5,title:"귀염둥이카페손인욱",content:"오고곡", authorId:4, authorName:"test3",likedUserIds:[]}
-    ];
-    findOne(id: number) {
-        const post = this.posts.find(post => post.id === id)
+    constructor(
+        @InjectRepository(PostEntity)
+        private readonly postsRepository: Repository<PostEntity>,
+    ) {}
+    async findAll() {
+        return await this.postsRepository.find();
+    }
+    async findOne(id: number): Promise<PostEntity> {
+        const post = await this.postsRepository.findOne({where: {id},
+        });
 
         if (!post) {
             throw new NotFoundException("게시글을 찾을수가 없습니다")
@@ -29,74 +24,44 @@ export class PostsService {
         return post;
     }
 
-    findAll() {
-        return this.posts;
-    }
-    create(title:string,content:string,authorId:number,authorName:string) {
-        const ids = this.posts.map(post => post.id);
-        const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1
-
-        const newPost = {
-            id: newId,
+    async create(title:string,content:string,authorId:number,authorName:string): Promise<PostEntity> {
+        const newPost = this.postsRepository.create({
             title,
             content,
             authorId,
             authorName,
-            likedUserIds: []
-        }
-        this.posts = ([...this.posts, newPost])
-        return newPost
+            likedUserIds: [],
+        });
+        return await this.postsRepository.save(newPost);
+
     }
-    edit(id:number,title:string,content:string) {
-        const post = this.findOne(id)
+    async edit(id:number,title:string,content:string): Promise<PostEntity> {
+        const post = await this.findOne(id);
 
-        const edited = this.posts.map(item => {
-            if (item.id !== id) {
-                return item;
-            } else {
-                return {...item,title,content}
-            }
-        })
-        this.posts = edited;
+        post.title = title;
+        post.content = content;
 
-        return {
-            ...post,
-            title,
-            content
-        };
+        return await this.postsRepository.save(post)
     }
-    remove(id:number) {
-        const post = this.findOne(id)
+    async remove(id:number): Promise<PostEntity> {
+        const post = await this.findOne(id)
 
-        const del = this.posts.filter(item => item.id !== id)
-        this.posts = del
+        await this.postsRepository.remove(post);
+
         return post;
     }
-    toggleLike(postId:number,userId:number) {
+    async toggleLike(postId:number,userId:number): Promise<PostEntity> {
         if (typeof userId !== "number" || Number.isNaN(userId)) {
             throw new BadRequestException("계정 관련으로 오류가 발생하였습니다")
         }
-        const post = this.findOne(postId);
+        const post = await this.findOne(postId);
+        const likedUserIds = post.likedUserIds ?? [];
+        const alreadyLiked = likedUserIds.includes(userId);
 
-        const alreadyLiked = post.likedUserIds.includes(userId);
-        const newLikedUserIds = alreadyLiked
-        ? post.likedUserIds.filter(id => id !== userId)
-        : [...post.likedUserIds, userId];
+        post.likedUserIds = alreadyLiked
+        ? likedUserIds.filter((id) => id !== userId)
+        : [...likedUserIds, userId];
 
-        const updatedPosts = this.posts.map(item => {
-            if (item.id !== postId) {
-                return item;
-            }
-
-            return {
-                ...item,
-                likedUserIds: newLikedUserIds
-            }
-        })
-        this.posts = updatedPosts
-        return {
-            ...post,
-            likedUserIds: newLikedUserIds
-        }
+        return this.postsRepository.save(post);
     }
 }

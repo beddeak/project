@@ -52,7 +52,6 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
 
         setComments(prevComment => [...prevComment, newComment]);
     }
-
     const editComment = async (
         id:number,
         content:string
@@ -68,20 +67,20 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
         });
         const edit = await response.json();
 
-        setComments(prevComment => prevComment.map(comments => comments.id === id ? edit : comments))
+        setComments(prevComment => prevComment.map(comment => comment.id === id ? edit : comment))
     }
-    const deleteComment = async (
-        id:number
-    ) => {
+
+        const deleteComment = async (id:number) => {
         const response = await fetch(`http://localhost:3000/comments/${id}`, {
             method: "DELETE"
         });
         if (!response.ok) {
             alert("댓글 삭제에 실패했습니다")
-            return
+            return;
         }
-        setComments(prevComment => prevComment.filter(comments => comments.id !== id))
+        setComments(prevComment => prevComment.filter(comment => comment.id !== id))
     }
+
     return (
 
         <CommentContext.Provider value={{comments,addComment,deleteComment,editComment}}>
