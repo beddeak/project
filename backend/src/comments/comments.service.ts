@@ -1,61 +1,57 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+    import { Injectable, NotFoundException } from '@nestjs/common';
+    import { InjectRepository } from '@nestjs/typeorm';
+    import { CommentsEntity } from './comments.entity';
+    import { Repository } from 'typeorm';
 
-@Injectable()
-export class CommentsService {
-    private comments = [
-        {id:1,postId:1,content:"뭐하냐",authorId:1,authorName:"test1"},
-        {id:2,postId:1,content:"정지",authorId:2,authorName:"admin1"},
-        {id:3,postId:2,content:"흠",authorId:1,authorName:"test1"},
-    ];
-    findOne(id:number) {
-        const comment = this.comments.find(comment => comment.id === id)
-
-        if (!comment) {
-            throw new NotFoundException("댓글이 없습니다")
+    @Injectable()
+    export class CommentsService {
+        constructor(
+            @InjectRepository(CommentsEntity)
+            private readonly commentsRepository: Repository<CommentsEntity>,
+        ) {}
+        async findAll(): Promise<CommentsEntity[]> {
+            return await this.commentsRepository.find();
         }
-        return comment;
-    }
-    findAll() {
-        return this.comments
-    }
-    findByPostId(postId: number) {
-        const commentFilter = this.comments.filter(comment => comment.postId === postId)
 
-        return commentFilter
-    }
-    create(postId:number,content:string,authorId:number,authorName:string) {
-        const ids = this.comments.map(comment => comment.id)
-        const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1
+        async findOne(id: number): Promise<CommentsEntity> {
+            const comment = await this.commentsRepository.findOne({
+                where: {id},
+            });
 
-        const newComment = {
-            id: newId,
-            postId,
-            content,
-            authorId,
-            authorName
-        }
-        this.comments = ([...this.comments,newComment])
-        return newComment
-    }
-    edit(id: number, content:string) {
-        const comment = this.findOne(id)
-        const edited = this.comments.map(item => {
-            if (item.id !== id) {
-                return item
-            } else {
-                return {...item,content}
+            if (!comment) {
+                throw new NotFoundException("댓글을 찾을수가 없습니다")
             }
-        })
-        this.comments = edited
-        return {
-            ...comment,
-            content
+
+            return comment;
+        }
+
+        async findByPostId(postId: number): Promise<CommentsEntity[]> {
+            return await this.commentsRepository.find({
+                where: {postId}
+            });
+        }
+        async create(postId:number, content:string, authorId:number, authorName:string): Promise<CommentsEntity> {
+            const comment = this.commentsRepository.create({
+                postId,
+                content,
+                authorId,
+                authorName
+            });
+            return await this.commentsRepository.save(comment);
+        }
+        async edit(id:number, content:string): Promise<CommentsEntity> {
+            const comment = await this.findOne(id)
+
+            comment.content = content;
+
+            return await this.commentsRepository.save(comment);
+        }
+
+        async remove(id: number): Promise<CommentsEntity> {
+            const comment = await this.findOne(id);
+
+            await this.commentsRepository.remove(comment);
+
+            return comment;
         }
     }
-    remove(id: number) {
-        const comment = this.findOne(id)
-        const del = this.comments.filter(comment => comment.id !== id)
-       this.comments = del
-       return comment
-    }
-}
