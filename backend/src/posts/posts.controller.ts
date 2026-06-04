@@ -1,5 +1,8 @@
-import { Body, Controller, Get, Param, Patch, Post,Delete, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post,Delete,ParseIntPipe} from '@nestjs/common';
 import { PostsService } from './posts.service';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
+import { ToggleLikeDto } from './dto/like-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -9,15 +12,11 @@ export class PostsController {
         return this.postsService.findAll();
     }
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        const postId = Number(id)
-        return this.postsService.findOne(postId);
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.postsService.findOne(id);
     }
     @Post()
-    create(@Body() body: any) {
-        if (!body?.title || !body?.content || body?.authorId === undefined) {
-            throw new BadRequestException("필수 값이 없습니다")
-        }
+    create(@Body() body: CreatePostDto) {
         return this.postsService.create(
             body.title,
             body.content,
@@ -26,28 +25,25 @@ export class PostsController {
         );
     }
     @Patch(':id')
-    edit(@Param('id') id:string,@Body() body: any) {
-        const postId = Number(id)
+    edit(@Param('id', ParseIntPipe) id:number,@Body() body: UpdatePostDto) {
         
         return this.postsService.edit(
-            postId,
+            id,
             body.title,
             body.content,
         )
     }
     @Delete(':id')
-    remove(@Param('id') id:string) {
-        const postId = Number(id)
+    remove(@Param('id', ParseIntPipe) id:number) {
 
 
-        return this.postsService.remove(postId)
+        return this.postsService.remove(id)
     }
     @Patch(':id/like')
-    toggleLike(@Param('id') id: string, @Body() body: any) {
-        const postId = Number(id)
+    toggleLike(@Param('id', ParseIntPipe) id: number, @Body() body: ToggleLikeDto) {
 
         return this.postsService.toggleLike(
-            postId,
+            id,
             body.userId
         )
     }
