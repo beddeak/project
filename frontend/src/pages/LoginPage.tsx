@@ -10,27 +10,19 @@ function LoginPage() {
     const { login } = context;
     const [username,setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const handleLogin = () => {
-            if (!username.trim()) return alert("아이디에 오류가 발생하였습니다");
-            if (!password.trim()) return alert("비밀번호에 오류가 발생하였습니다");
+    const handleLogin = async () => {
+        if (!username.trim()) {
+            alert("아이디를 입력해주세요")
+        }
+        if (!password.trim()) {
+            alert("비밀번호를 입력해주세요")
+        }
+        const succes = await login(username.trim(), password);
 
-            const trimmedUsername = username.trim();
-
-            let id = 99;
-            let role: "user" | "admin" = "user";
-
-            if (trimmedUsername === "admin1") {
-                id = 2;
-                role = "admin";
-            } else if (trimmedUsername === "test1") {
-                id = 1;
-            } else if (trimmedUsername === "test2") {
-                id = 3;
-            } else if (trimmedUsername === "test3") {
-                id = 4;
-            }
-
-            login(id, trimmedUsername, role);
+        if (!succes) {
+            alert("아이디 혹은 비밀번호가 올바르지않습니다")
+            return;
+        }
             navigate("/");
         }
     
