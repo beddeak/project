@@ -17,24 +17,56 @@ import { CommentContextProvider } from "./context/commentContext";
 function App() {
   return (
     <BrowserRouter>
-    <AuthContextProvider>
-      <PostContextProvider>
-        <CommentContextProvider>
-      <Routes>
-        <Route path="/login" element={<LoginPage />}/>
-        <Route path="/" element={<HomePage />}/>
-        <Route path="/signup" element={<SignupPage />}/>
-        <Route path="/posts" element={<PostlistPage />}/>
-        <Route path="/posts/:id/detail" element={<PostDetailPage />}/>
-        <Route path="/posts/write" element={<ProtectRoute><PostCreatePage/></ProtectRoute>}/>
-        <Route path="/posts/:id/edit" element={<ProtectRoute><PostEditPage /></ProtectRoute>}/>
-        <Route path="/mypage/posts" element={<ProtectRoute><MyPostsPage/></ProtectRoute>}/>
-        <Route path="/admin" element={<AdminRoute><AdminDashboardPage/></AdminRoute>}/>
-      </Routes>
+  <AuthContextProvider>
+    <PostContextProvider>
+      <CommentContextProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/posts" element={<PostlistPage />} />
+          <Route path="/posts/:id/detail" element={<PostDetailPage />} />
+
+          <Route
+            path="/posts/write"
+            element={
+              <ProtectRoute>
+                <PostCreatePage />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="/posts/:id/edit"
+            element={
+              <ProtectRoute>
+                <PostEditPage />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="/mypage/posts"
+            element={
+              <ProtectRoute>
+                <MyPostsPage />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboardPage />
+              </AdminRoute>
+            }
+          />
+        </Routes>
       </CommentContextProvider>
-      </PostContextProvider>
-    </AuthContextProvider>
-    </BrowserRouter>
+    </PostContextProvider>
+  </AuthContextProvider>
+</BrowserRouter>
   );
 }
 

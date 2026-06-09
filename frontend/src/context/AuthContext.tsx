@@ -1,4 +1,4 @@
-import { createContext,useState,useEffect } from "react";
+import { createContext,useState } from "react";
 
 type Role = "admin" | "user";
 
@@ -17,14 +17,10 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthContextProvider({children}: {children: React.ReactNode}) {
-    const [user, setUser] = useState<user | null>(null)
-    useEffect(() => {
+    const [user, setUser] = useState<user | null>(() => {
         const savedUser = localStorage.getItem("user");
-
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-    }, []);
+        return savedUser ? JSON.parse(savedUser) : null;
+    })
 
     const login = async (username:string,password:string) => {
         const respone = await fetch("http://localhost:3000/auth/login", {
@@ -49,7 +45,7 @@ export function AuthContextProvider({children}: {children: React.ReactNode}) {
     };
     const logout = () => {
         setUser(null);
-        localStorage.removeItemItem("user");
+        localStorage.removeItem("user");
     }
 
     return  (

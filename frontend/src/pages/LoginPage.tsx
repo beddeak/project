@@ -13,19 +13,20 @@ function LoginPage() {
     const handleLogin = async () => {
         if (!username.trim()) {
             alert("아이디를 입력해주세요")
+            return;
         }
         if (!password.trim()) {
             alert("비밀번호를 입력해주세요")
+            return;
         }
-        const succes = await login(username.trim(), password);
+        const success = await login(username.trim(), password);
 
-        if (!succes) {
+        if (!success) {
             alert("아이디 혹은 비밀번호가 올바르지않습니다")
             return;
         }
             navigate("/");
         }
-    
 
 
     return (
