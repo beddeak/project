@@ -5,11 +5,11 @@ import CommentContext from "../context/commentContext";
 import PostContext from "../context/PostContext";
 import "./AdminDashboardPage.css";
 
-function SecurityMark() {
+function AdminMark() {
     return (
         <div className="admin-security-mark" aria-hidden="true">
             <span className="admin-security-mark__ring" />
-            <span className="admin-security-mark__core">05</span>
+            <span className="admin-security-mark__core">AD</span>
             <span className="admin-security-mark__line admin-security-mark__line--one" />
             <span className="admin-security-mark__line admin-security-mark__line--two" />
             <span className="admin-security-mark__line admin-security-mark__line--three" />
@@ -17,26 +17,26 @@ function SecurityMark() {
     );
 }
 
-function StatusIcon({ type }: { type: "archive" | "signal" | "person" | "shield" }) {
+function StatusIcon({ type }: { type: "post" | "comment" | "member" | "review" }) {
     const paths = {
-        archive: (
+        post: (
             <>
                 <path d="M4 7.5h16v12H4z" />
                 <path d="M3 4.5h18v3H3zM9 11.5h6" />
             </>
         ),
-        signal: (
+        comment: (
             <>
                 <path d="M4 18v2M8 14v6M12 10v10M16 6v14M20 3v17" />
             </>
         ),
-        person: (
+        member: (
             <>
                 <circle cx="12" cy="8" r="3.5" />
                 <path d="M5 20c.7-4 3-6 7-6s6.3 2 7 6" />
             </>
         ),
-        shield: (
+        review: (
             <>
                 <path d="M12 3 5 6v5c0 4.7 2.6 8.1 7 10 4.4-1.9 7-5.3 7-10V6l-7-3Z" />
                 <path d="m9 12 2 2 4-5" />
@@ -65,7 +65,7 @@ export function AdminDashBoard() {
     const { posts } = postcontext;
     const totalLikes = posts.reduce((sum, post) => sum + post.likedUserIds.length, 0);
     const activeAuthors = new Set(posts.map((post) => post.authorId)).size;
-    const orphanComments = comments.filter(
+    const commentsNeedingReview = comments.filter(
         (comment) => !posts.some((post) => post.id === comment.postId),
     ).length;
 
@@ -75,36 +75,36 @@ export function AdminDashBoard() {
 
             <aside className="admin-sidebar">
                 <div className="admin-brand">
-                    <SecurityMark />
+                    <AdminMark />
                     <div>
-                        <span className="admin-eyebrow">SCP FOUNDATION</span>
-                        <strong>OVERSEER</strong>
-                        <small>COMMAND TERMINAL</small>
+                        <span className="admin-eyebrow">COMMUNITY MANAGEMENT</span>
+                        <strong>ADMIN CENTER</strong>
+                        <small>MANAGEMENT DASHBOARD</small>
                     </div>
                 </div>
 
                 <div className="admin-clearance">
-                    <span>CLEARANCE</span>
-                    <strong>LEVEL 5</strong>
-                    <small>O5 COUNCIL EYES ONLY</small>
+                    <span>ADMIN ROLE</span>
+                    <strong>SUPER ADMIN</strong>
+                    <small>ALL MANAGEMENT PERMISSIONS</small>
                 </div>
 
                 <nav className="admin-nav" aria-label="관리자 메뉴">
                     <a className="admin-nav__item admin-nav__item--active" href="#overview">
                         <span>01</span>
-                        통제 현황
+                        대시보드
                     </a>
                     <a className="admin-nav__item" href="#post-archive">
                         <span>02</span>
-                        기록 보관소
+                        게시글 관리
                     </a>
                     <a className="admin-nav__item" href="#comment-feed">
                         <span>03</span>
-                        통신 감청
+                        댓글 관리
                     </a>
                     <Link className="admin-nav__item" to="/posts">
                         <span>04</span>
-                        공개 기록 열람
+                        커뮤니티로 이동
                     </Link>
                 </nav>
 
@@ -112,12 +112,12 @@ export function AdminDashBoard() {
                     <div className="admin-system-status">
                         <span className="admin-live-dot" />
                         <div>
-                            <strong>SITE NETWORK</strong>
-                            <small>모든 시스템 정상</small>
+                            <strong>COMMUNITY SERVICE</strong>
+                            <small>서비스 정상 운영 중</small>
                         </div>
                     </div>
                     <button type="button" className="admin-logout" onClick={logout}>
-                        세션 종료
+                        로그아웃
                         <span>↗</span>
                     </button>
                 </div>
@@ -126,18 +126,18 @@ export function AdminDashBoard() {
             <main className="admin-main">
                 <header className="admin-topbar">
                     <div className="admin-topbar__location">
-                        <span>SECURE TERMINAL</span>
-                        <strong>KR-SITE / CONTROL-05</strong>
+                        <span>ADMIN DASHBOARD</span>
+                        <strong>COMMUNITY / OVERVIEW</strong>
                     </div>
                     <div className="admin-topbar__right">
                         <div className="admin-classified">
-                            <span>CLASSIFIED</span>
-                            <strong>THAUMIEL</strong>
+                            <span>MANAGEMENT STATUS</span>
+                            <strong>NORMAL</strong>
                         </div>
                         <div className="admin-operator">
-                            <span>O5</span>
+                            <span>AD</span>
                             <div>
-                                <small>AUTHORIZED OPERATOR</small>
+                                <small>CURRENT ADMIN</small>
                                 <strong>{user?.name ?? "UNKNOWN"}</strong>
                             </div>
                         </div>
@@ -147,64 +147,64 @@ export function AdminDashBoard() {
                 <div className="admin-content">
                     <section className="admin-hero" id="overview">
                         <div>
-                            <span className="admin-section-code">SYS.01 / OVERVIEW</span>
+                            <span className="admin-section-code">DASH.01 / OVERVIEW</span>
                             <h1>
-                                관리자 통제실
-                                <small>ADMINISTRATIVE COMMAND</small>
+                                커뮤니티 관리자
+                                <small>COMMUNITY MANAGEMENT</small>
                             </h1>
                             <p>
-                                인가된 O5 감독관 세션입니다. 모든 접근과 기록 열람은
-                                자동으로 보안 로그에 저장됩니다.
+                                게시글과 댓글, 활동 현황을 한눈에 확인하고 커뮤니티 운영에
+                                필요한 항목을 관리할 수 있습니다.
                             </p>
                         </div>
                         <div className="admin-alert-level">
                             <div className="admin-alert-level__dial">
-                                <span>II</span>
+                                <span>OK</span>
                             </div>
                             <div>
-                                <small>CURRENT THREAT LEVEL</small>
-                                <strong>제한적 경계</strong>
-                                <span>CONDITION VIOLET</span>
+                                <small>COMMUNITY STATUS</small>
+                                <strong>정상 운영 중</strong>
+                                <span>CONTENT UP TO DATE</span>
                             </div>
                         </div>
                     </section>
 
                     <section className="admin-stats" aria-label="관리 현황 통계">
                         <article className="admin-stat-card">
-                            <StatusIcon type="archive" />
+                            <StatusIcon type="post" />
                             <div>
-                                <span>ARCHIVED RECORDS</span>
+                                <span>TOTAL POSTS</span>
                                 <strong>{String(posts.length).padStart(2, "0")}</strong>
-                                <small>등록된 게시글</small>
+                                <small>전체 게시글</small>
                             </div>
-                            <em>+ LIVE</em>
+                            <em>POSTS</em>
                         </article>
                         <article className="admin-stat-card">
-                            <StatusIcon type="signal" />
+                            <StatusIcon type="comment" />
                             <div>
-                                <span>INTERCEPTED SIGNALS</span>
+                                <span>TOTAL COMMENTS</span>
                                 <strong>{String(comments.length).padStart(2, "0")}</strong>
-                                <small>등록된 댓글</small>
+                                <small>전체 댓글</small>
                             </div>
-                            <em>MONITORED</em>
+                            <em>COMMENTS</em>
                         </article>
                         <article className="admin-stat-card">
-                            <StatusIcon type="person" />
+                            <StatusIcon type="member" />
                             <div>
-                                <span>ACTIVE PERSONNEL</span>
+                                <span>ACTIVE AUTHORS</span>
                                 <strong>{String(activeAuthors).padStart(2, "0")}</strong>
-                                <small>활동 기록 작성자</small>
+                                <small>게시글 작성자</small>
                             </div>
-                            <em>VERIFIED</em>
+                            <em>CONTRIBUTORS</em>
                         </article>
                         <article className="admin-stat-card admin-stat-card--warning">
-                            <StatusIcon type="shield" />
+                            <StatusIcon type="review" />
                             <div>
-                                <span>SECURITY FLAGS</span>
-                                <strong>{String(orphanComments).padStart(2, "0")}</strong>
-                                <small>원본 미확인 댓글</small>
+                                <span>REVIEW REQUIRED</span>
+                                <strong>{String(commentsNeedingReview).padStart(2, "0")}</strong>
+                                <small>검토 필요 댓글</small>
                             </div>
-                            <em>{totalLikes} SIGNALS</em>
+                            <em>{totalLikes} TOTAL LIKES</em>
                         </article>
                     </section>
 
@@ -212,42 +212,42 @@ export function AdminDashBoard() {
                         <article className="admin-panel admin-panel--records" id="post-archive">
                             <div className="admin-panel__header">
                                 <div>
-                                    <span className="admin-section-code">ARC.02 / DATABASE</span>
-                                    <h2>기록 보관소</h2>
+                                    <span className="admin-section-code">POST.02 / MANAGEMENT</span>
+                                    <h2>게시글 관리</h2>
                                 </div>
-                                <span className="admin-panel__count">{posts.length} FILES</span>
+                                <span className="admin-panel__count">{posts.length} POSTS</span>
                             </div>
 
                             <div className="admin-record-table">
                                 <div className="admin-record-table__head">
-                                    <span>FILE ID</span>
-                                    <span>기록명 / 작성자</span>
-                                    <span>신호</span>
-                                    <span>접근</span>
+                                    <span>POST ID</span>
+                                    <span>제목 / 작성자</span>
+                                    <span>좋아요</span>
+                                    <span>관리</span>
                                 </div>
                                 {posts.length === 0 ? (
                                     <div className="admin-empty-state">
-                                        <strong>NO RECORDS DETECTED</strong>
-                                        <span>현재 보관된 기록이 없습니다.</span>
+                                        <strong>NO POSTS YET</strong>
+                                        <span>등록된 게시글이 없습니다.</span>
                                     </div>
                                 ) : (
                                     posts.slice(0, 6).map((post) => (
                                         <div className="admin-record-row" key={post.id}>
                                             <span className="admin-record-id">
-                                                SCP-{String(post.id).padStart(3, "0")}
+                                                POST-{String(post.id).padStart(3, "0")}
                                             </span>
                                             <div className="admin-record-title">
                                                 <strong>{post.title}</strong>
-                                                <span>BY {post.authorName || "UNKNOWN"}</span>
+                                                <span>작성자: {post.authorName || "알 수 없음"}</span>
                                             </div>
                                             <span className="admin-record-likes">
-                                                {post.likedUserIds.length} ACK
+                                                {post.likedUserIds.length}개
                                             </span>
                                             <Link
                                                 className="admin-inspect-link"
                                                 to={`/posts/${post.id}/detail`}
                                             >
-                                                열람
+                                                상세
                                                 <span>↗</span>
                                             </Link>
                                         </div>
@@ -259,20 +259,20 @@ export function AdminDashBoard() {
                         <article className="admin-panel admin-panel--feed" id="comment-feed">
                             <div className="admin-panel__header">
                                 <div>
-                                    <span className="admin-section-code">COM.03 / LIVE FEED</span>
-                                    <h2>통신 감청 기록</h2>
+                                    <span className="admin-section-code">COMMENT.03 / MANAGEMENT</span>
+                                    <h2>최근 댓글</h2>
                                 </div>
                                 <span className="admin-live-label">
                                     <span className="admin-live-dot" />
-                                    LIVE
+                                    LATEST
                                 </span>
                             </div>
 
                             <div className="admin-comment-feed">
                                 {comments.length === 0 ? (
                                     <div className="admin-empty-state">
-                                        <strong>CHANNEL SILENT</strong>
-                                        <span>감지된 통신 기록이 없습니다.</span>
+                                        <strong>NO COMMENTS YET</strong>
+                                        <span>등록된 댓글이 없습니다.</span>
                                     </div>
                                 ) : (
                                     comments.slice(-5).reverse().map((comment, index) => {
@@ -291,17 +291,17 @@ export function AdminDashBoard() {
                                                 </div>
                                                 <div className="admin-comment__body">
                                                     <div>
-                                                        <strong>{comment.authorName || "ANONYMOUS"}</strong>
+                                                        <strong>{comment.authorName || "익명"}</strong>
                                                         <span>
                                                             #{String(comment.id).padStart(4, "0")}
                                                         </span>
                                                     </div>
                                                     <p>{comment.content}</p>
                                                     <small>
-                                                        TARGET /{" "}
+                                                        게시글 /{" "}
                                                         {originalPost
                                                             ? originalPost.title
-                                                            : `DELETED RECORD ${comment.postId}`}
+                                                            : `삭제된 게시글 #${comment.postId}`}
                                                     </small>
                                                 </div>
                                             </Link>
@@ -313,9 +313,9 @@ export function AdminDashBoard() {
                     </section>
 
                     <footer className="admin-footer">
-                        <span>FOUNDATION SECURE INTRANET</span>
-                        <span>SESSION ENCRYPTION: AES-256 / ACTIVE</span>
-                        <span>REMEMBER: SECURE. CONTAIN. PROTECT.</span>
+                        <span>COMMUNITY ADMIN CENTER</span>
+                        <span>POSTS / COMMENTS / MEMBERS</span>
+                        <span>MANAGEMENT DASHBOARD ACTIVE</span>
                     </footer>
                 </div>
             </main>
