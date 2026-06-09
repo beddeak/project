@@ -61,13 +61,26 @@ export function AdminDashBoard() {
     }
 
     const { user, logout } = authcontext;
-    const { comments } = commentcontext;
-    const { posts } = postcontext;
+    const { comments, deleteComment } = commentcontext;
+    const { posts, deletePost } = postcontext;
     const totalLikes = posts.reduce((sum, post) => sum + post.likedUserIds.length, 0);
     const activeAuthors = new Set(posts.map((post) => post.authorId)).size;
     const commentsNeedingReview = comments.filter(
         (comment) => !posts.some((post) => post.id === comment.postId),
     ).length;
+    const handlePostDelete = async (postId:number) => {
+        if (!window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
+            return;
+        }
+        await deletePost(postId);
+    }
+    const handleCommentDelete = async (commentId:number) => {
+        if (!window.confirm("정말로 이 댓글을 삭제하시겠습니가?")) {
+            return;
+        }
+
+        await deleteComment(commentId);
+    }
 
     return (
         <div className="admin-dashboard">
@@ -250,6 +263,13 @@ export function AdminDashBoard() {
                                                 상세
                                                 <span>↗</span>
                                             </Link>
+                                            <button
+                                                type="button"
+                                                className="admin-danger-button"
+                                                onClick={() => handlePostDelete(post.id)}
+                                            >
+                                            삭제버튼
+                                            </button>
                                         </div>
                                     ))
                                 )}
@@ -303,6 +323,13 @@ export function AdminDashBoard() {
                                                             ? originalPost.title
                                                             : `삭제된 게시글 #${comment.postId}`}
                                                     </small>
+                                                    <button 
+                                                    type="button"
+                                                    className="delete-key"
+                                                    onClick={() => handleCommentDelete(comment.id)}
+                                                    >
+                                                    삭제하기
+                                                    </button>
                                                 </div>
                                             </Link>
                                         );

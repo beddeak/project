@@ -5,6 +5,7 @@
     --admin-purple: #8b5cf6;
     --admin-purple-bright: #ad87ff;
     --admin-purple-dark: #382459;
+    --admin-danger-bright: #ff6b8d;
     --admin-line: rgba(155, 116, 238, 0.22);
     --admin-text: #e8e4ef;
     --admin-muted: #80798a;
@@ -611,7 +612,7 @@
 .admin-record-table__head,
 .admin-record-row {
     display: grid;
-    grid-template-columns: 92px minmax(150px, 1fr) 70px 54px;
+    grid-template-columns: 92px minmax(150px, 1fr) 70px 54px 72px;
     gap: 10px;
     align-items: center;
 }
@@ -682,6 +683,51 @@
 
 .admin-inspect-link:hover {
     color: var(--admin-purple-bright);
+}
+
+.admin-danger-button,
+.delete-key {
+    min-height: 30px;
+    padding: 0 10px;
+    color: var(--admin-danger-bright);
+    border: 1px solid rgba(239, 71, 111, 0.42);
+    background: rgba(239, 71, 111, 0.055);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.admin-danger-button:hover,
+.delete-key:hover {
+    color: #fff;
+    border-color: var(--admin-danger-bright);
+    background: rgba(239, 71, 111, 0.18);
+    box-shadow: 0 0 14px rgba(239, 71, 111, 0.16);
+    transform: translateY(-1px);
+}
+
+.admin-danger-button:active,
+.delete-key:active {
+    background: rgba(239, 71, 111, 0.28);
+    transform: translateY(0);
+}
+
+.admin-danger-button:focus-visible,
+.delete-key:focus-visible {
+    outline: 1px solid var(--admin-danger-bright);
+    outline-offset: 3px;
+}
+
+.delete-key {
+    margin-top: 9px;
 }
 
 .admin-comment-feed {
@@ -905,7 +951,7 @@
     }
 
     .admin-record-row {
-        grid-template-columns: 74px minmax(0, 1fr) 46px;
+        grid-template-columns: 74px minmax(0, 1fr) 46px 62px;
         padding: 9px 12px;
     }
 
@@ -920,5 +966,11 @@
 
     .admin-inspect-link span {
         font-size: 14px;
+    }
+
+    .admin-danger-button {
+        min-height: 28px;
+        padding: 0 7px;
+        font-size: 8px;
     }
 }
