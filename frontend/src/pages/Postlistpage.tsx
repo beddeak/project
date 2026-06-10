@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import PostContext from "../context/PostContext";
 import "./PostListPageStyle.css";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 function PostListPage() {
+    const [searchText,setSearchText] = useState("");
     const context = useContext(PostContext);
     if (!context) return <p>해당 글을 찾을수가없습니다</p>;
     const { posts } = context;
