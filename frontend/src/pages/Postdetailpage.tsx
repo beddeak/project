@@ -170,6 +170,9 @@ function PostDetailPage() {
     return (
         <div className="detail-page">
             <header className="detail-title">
+                <Link className="detail-exit-link" to="/posts">
+                    나가기
+                </Link>
                 <h1>{post.title}</h1>
             </header>
 

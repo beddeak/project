@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useNavigate,Navigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import PostForm from "../compo/PostForm";
 import PostContext from "../context/PostContext";
 import AuthContext from "../context/AuthContext";
@@ -27,6 +27,11 @@ function PostCreatePage() {
 
     return (
         <div className="Create-Page">
+            <nav className="editor-nav" aria-label="글쓰기 페이지 이동">
+                <Link className="editor-back-link" to="/posts">
+                    글 목록으로 돌아가기
+                </Link>
+            </nav>
             <PostForm onSubmit={handleWrite} />
         </div>
     );

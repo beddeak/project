@@ -1,140 +1,433 @@
 .HomePage {
   min-height: 100vh;
-  padding: 48px 20px;
+  padding: 54px 24px;
+  box-sizing: border-box;
   background:
-    linear-gradient(180deg, #f4f7fb 0%, #ffffff 42%),
-    #000000;
-  color: #171f2a;
+    radial-gradient(circle at 10% 5%, rgba(50, 111, 214, 0.18), transparent 28%),
+    linear-gradient(145deg, #0b111b 0%, #101926 55%, #0b121d 100%);
+  color: #e8edf5;
 }
 
-.login-states {
-  width: min(920px, 100%);
+.home-layout {
+  width: min(1180px, 100%);
   margin: 0 auto;
-  border: 1px solid #cfd8e3;
-  border-top: 3px solid #1f5fbf;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 14px 32px rgba(31, 45, 61, 0.08);
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
 }
 
-.login-states::before {
-  content: "COMMUNITY MAIN";
-  display: block;
-  padding: 14px 18px;
-  border-bottom: 1px solid #d8e0ea;
-  background: linear-gradient(180deg, #ffffff 0%, #eef4fb 100%);
-  color: #174b9a;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0;
+.home-content,
+.home-sidebar {
+  display: grid;
+  gap: 20px;
 }
 
-.login-states > div {
-  padding: 18px;
-  border-bottom: 1px solid #e6ebf1;
+.home-hero {
+  min-height: 420px;
+  padding: 54px;
+  border: 1px solid #26364b;
+  border-radius: 18px;
+  background:
+    linear-gradient(120deg, rgba(17, 29, 45, 0.96), rgba(12, 20, 32, 0.9)),
+    #111b2a;
+  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.28);
+  box-sizing: border-box;
 }
 
-.login-states > div:last-child {
-  border-bottom: 0;
+.home-eyebrow,
+.admin-callout span,
+.popular-posts-card header span {
+  color: #7faeff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.login-states p {
-  margin: 6px 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #263241;
+.home-hero h1 {
+  max-width: 600px;
+  margin: 20px 0 18px;
+  color: #f7faff;
+  font-size: clamp(42px, 6vw, 70px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
 }
 
-.login-states p:first-child {
-  font-weight: 800;
-  color: #0f3f88;
+.home-hero p {
+  max-width: 560px;
+  margin: 0;
+  color: #aebdd1;
+  font-size: 17px;
+  line-height: 1.8;
 }
 
-.login-info {
-  position: relative;
+.home-actions,
+.profile-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.logout-button {
-  min-height: 38px;
-  margin-top: 10px;
-  padding: 0 14px;
-  border: 1px solid #d8a5a5;
-  border-radius: 6px;
-  background: #fff7f7;
-  color: #a32626;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease,
-    transform 160ms ease;
+.home-actions {
+  margin-top: 32px;
 }
 
-.logout-button:hover {
-  border-color: #b83232;
-  background: #b83232;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.login-states a {
+.home-actions a,
+.profile-card__actions a,
+.profile-card__actions button,
+.admin-callout a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
-  margin: 4px 8px 4px 0;
-  padding: 0 14px;
-  border: 1px solid #b8c7da;
-  border-radius: 6px;
-  background: #f8fbff;
-  color: #143d7d;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #385273;
+  border-radius: 9px;
+  color: #dbe8fa;
+  background: #16243a;
+  font: inherit;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
+  cursor: pointer;
   transition:
-    background-color 160ms ease,
     border-color 160ms ease,
+    background 160ms ease,
     color 160ms ease,
     transform 160ms ease;
 }
 
-.login-states a:hover {
-  border-color: #1f5fbf;
-  background: #1f5fbf;
+.home-actions .home-primary-link,
+.profile-card__actions a:first-child,
+.admin-callout a {
+  border-color: #4f8dff;
+  background: #2f6fed;
+  color: #ffffff;
+}
+
+.home-actions a:hover,
+.profile-card__actions a:hover,
+.profile-card__actions button:hover,
+.admin-callout a:hover {
+  border-color: #77a9ff;
+  background: #285fbd;
   color: #ffffff;
   transform: translateY(-1px);
 }
 
-.posts {
-  background: #fbfcfe;
+.home-actions a:focus-visible,
+.profile-card__actions a:focus-visible,
+.profile-card__actions button:focus-visible,
+.admin-callout a:focus-visible {
+  outline: 2px solid #78a9ef;
+  outline-offset: 3px;
 }
 
-.posts a {
-  width: 100%;
-  min-height: 46px;
-  border-color: #1f5fbf;
-  background: #1f5fbf;
-  color: #ffffff;
-  font-size: 16px;
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.posts a:hover {
-  background: #174b9a;
+.home-stats article {
+  padding: 20px;
+  border: 1px solid #26364b;
+  border-radius: 13px;
+  background: rgba(16, 25, 38, 0.9);
 }
 
-.myposts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.home-stats span {
+  color: #8497b2;
+  font-size: 12px;
+  font-weight: 800;
 }
 
-.myposts a,
-.myposts .logout-button {
-  flex: 1 1 160px;
+.home-stats strong {
+  display: block;
+  margin: 8px 0 4px;
+  color: #f7faff;
+  font-size: 28px;
+}
+
+.home-stats p {
   margin: 0;
+  color: #8291a5;
+  font-size: 12px;
+}
+
+.admin-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px;
+  border: 1px solid #4f4071;
+  border-radius: 13px;
+  background: linear-gradient(120deg, rgba(68, 48, 104, 0.32), rgba(16, 25, 38, 0.9));
+}
+
+.admin-callout h2 {
+  margin: 6px 0 0;
+  font-size: 18px;
+}
+
+.home-sidebar {
+  position: sticky;
+  top: 24px;
+}
+
+.profile-card,
+.popular-posts-card {
+  border: 1px solid #26364b;
+  border-radius: 16px;
+  background: rgba(16, 25, 38, 0.94);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+.profile-card {
+  padding: 20px;
+}
+
+.profile-card__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8fa0b8;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #657389;
+}
+
+.status-dot.online {
+  background: #57d394;
+  box-shadow: 0 0 0 4px rgba(87, 211, 148, 0.12);
+}
+
+.profile-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.profile-avatar {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid #4f8dff;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #3479ed, #234b89);
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.profile-card h2,
+.popular-posts-card h2,
+.guest-card h2 {
+  margin: 0;
+  color: #f5f8fd;
+}
+
+.profile-card__identity h2 {
+  font-size: 18px;
+}
+
+.profile-card__identity p,
+.guest-card p {
+  margin: 4px 0 0;
+  color: #8798af;
+  font-size: 13px;
+}
+
+.profile-card__summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-card__summary div {
+  padding: 12px 13px;
+  border: 1px solid #293c55;
+  border-radius: 10px;
+  background: #0d1623;
+}
+
+.profile-card__summary span {
+  display: block;
+  color: #8fa0b8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-card__summary strong {
+  display: block;
+  margin-top: 5px;
+  color: #89b5ff;
+  font-size: 18px;
+}
+
+.profile-card__actions > * {
+  flex: 1 1 120px;
+}
+
+.profile-card__actions button {
+  border-color: #5b3440;
+  background: #261923;
+  color: #f3a5b4;
+}
+
+.guest-card {
+  margin-top: 18px;
+}
+
+.guest-card h2 {
+  font-size: 18px;
+}
+
+.guest-card .profile-card__actions {
+  margin-top: 16px;
+}
+
+.popular-posts-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid #26364b;
+  background: linear-gradient(180deg, #152238, #101926);
+}
+
+.popular-posts-card header h2 {
+  margin-top: 5px;
+  font-size: 20px;
+}
+
+.popular-posts-card header > small {
+  padding: 5px 8px;
+  border: 1px solid #344a68;
+  border-radius: 999px;
+  color: #91a4bd;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.popular-posts-card ol {
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+}
+
+.popular-posts-card li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.popular-posts-card li + li {
+  border-top: 1px solid rgba(38, 54, 75, 0.72);
+}
+
+.popular-post-rank {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 8px;
+  background: #18263a;
+  color: #9eb2cc;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.popular-posts-card li:first-child .popular-post-rank {
+  background: #614f1d;
+  color: #ffe28a;
+}
+
+.popular-post-link {
+  min-width: 0;
+  padding: 5px 0;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.popular-post-link strong,
+.popular-post-link small,
+.popular-post-likes small {
+  display: block;
+}
+
+.popular-post-link strong {
+  overflow: hidden;
+  color: #e6edf7;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+.popular-post-link small {
+  margin-top: 3px;
+  color: #72849c;
+  font-size: 11px;
+}
+
+.popular-post-link:hover strong {
+  color: #8bb7ff;
+}
+
+.popular-post-link:focus-visible {
+  outline: 2px solid #78a9ef;
+  outline-offset: 3px;
+}
+
+.popular-post-likes {
+  color: #8bb7ff;
+  font-size: 15px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.popular-post-likes small {
+  margin-top: 2px;
+  color: #6f8198;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.popular-posts-empty {
+  margin: 0;
+  padding: 24px 20px;
+  color: #8291a5;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-sidebar {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -142,20 +435,27 @@
     padding: 24px 12px;
   }
 
-  .login-states::before {
-    padding: 12px 14px;
+  .home-hero {
+    min-height: auto;
+    padding: 30px 22px;
   }
 
-  .login-states > div {
-    padding: 14px;
+  .home-hero h1 {
+    font-size: 38px;
   }
 
-  .login-states a {
-    width: 100%;
-    margin-right: 0;
+  .home-stats,
+  .home-sidebar {
+    grid-template-columns: 1fr;
   }
 
-  .logout-button {
-    width: 100%;
+  .admin-callout {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-actions a,
+  .admin-callout a {
+    flex: 1 1 100%;
   }
 }

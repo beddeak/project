@@ -6,6 +6,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 function PostListPage() {
     const [searchText, setSearchText] = useState("");
     const [currentPage,setCurrentPage] = useState(1);
+    const [sortType, setSortType] = useState("latest");
     const postsPerPage = 5;
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -26,22 +27,48 @@ function PostListPage() {
         post.content.toLowerCase().includes(normalizedSearchText) ||
         post.authorName.toLocaleLowerCase().includes(normalizedSearchText)
     );
-    const totalPage = Math.ceil(filteredPosts.length / postsPerPage);
+    const sortedPosts = [...filteredPosts].sort((a, b) => {
+        if (sortType === "latest") {
+            return b.id - a.id;
+        }
+        if (sortType === "oldest") {
+            return a.id - b.id;
+        }
+        if (sortType === "likes") {
+            return b.likedUserIds.length - a.likedUserIds.length;
+        }
+        return 0;
+    });
+    const totalPage = Math.ceil(sortedPosts.length / postsPerPage);
     const startIndex = (currentPage - 1 ) * postsPerPage;
-    const currentPosts = filteredPosts.slice(startIndex, startIndex + postsPerPage); 
+    const currentPosts = sortedPosts.slice(startIndex, startIndex + postsPerPage);
     const closeSearch = () => {
         setSearchText("");
+        setCurrentPage(1);
         setIsSearchOpen(false);
     };
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [searchText])
 
     return (
         <div className="post-list-page">
             <div className="post-list-header">
+                <Link className="lobby-link" to="/">
+                    로비로 돌아가기
+                </Link>
                 <h1>글 목록</h1>
                 <div className="post-list-actions">
+                    <select
+                        className="sort-select"
+                        value={sortType}
+                        aria-label="게시글 정렬"
+                        onChange={(e) => {
+                            setSortType(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <option value="latest">최신순</option>
+                        <option value="oldest">오래된순</option>
+                        <option value="likes">좋아요순</option>
+                    </select>
                     <button
                         type="button"
                         className="search-toggle-button"
@@ -67,7 +94,10 @@ function PostListPage() {
                     <input
                         ref={searchInputRef}
                         value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
+                        onChange={(e) => {
+                            setSearchText(e.target.value);
+                            setCurrentPage(1);
+                        }}
                         placeholder="제목, 내용, 작성자로 검색"
                         aria-label="게시글 검색"
                     />
@@ -87,7 +117,7 @@ function PostListPage() {
             ) : filteredPosts.length === 0 ? (
                 <p className="search-empty">검색 결과가 없습니다</p>
             ) : (
-                filteredPosts.map((post) => (
+                currentPosts.map((post) => (
                     <div key={post.id} className="post-item">
                         <div className="post-title">
                             <Link to={`/posts/${post.id}/detail`}>{post.title}</Link>
@@ -98,6 +128,26 @@ function PostListPage() {
                         </div>
                     </div>
                 ))
+            )}
+            {totalPage > 1 && (
+                <div className="post-pagination">
+                    {Array.from({ length: totalPage }, (_, index) => {
+                        const page = index + 1;
+
+                        return (
+                            <button
+                                key={page}
+                                type="button"
+                                className={page === currentPage ? "active" : ""}
+                                aria-label={`Page ${page}`}
+                                aria-current={page === currentPage ? "page" : undefined}
+                                onClick={() => setCurrentPage(page)}
+                            >
+                                {page}
+                            </button>
+                        );
+                    })}
+                </div>
             )}
         </div>
     );

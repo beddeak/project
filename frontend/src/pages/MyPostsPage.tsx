@@ -23,7 +23,12 @@ export default function MyPostsPage() {
 
     return (
         <div className="post-list-page">
-            <h1>내가 쓴 글</h1>
+            <div className="post-list-header">
+                <Link className="lobby-link" to="/">
+                    돌아가기
+                </Link>
+                <h1>내가 쓴 글</h1>
+            </div>
             {myPosts.length === 0 ? (
                 <p>작성된 글이 없습니다</p>
             ) : (

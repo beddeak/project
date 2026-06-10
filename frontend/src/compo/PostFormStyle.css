@@ -5,6 +5,54 @@
   color: #e8edf5;
 }
 
+.editor-nav {
+  max-width: 780px;
+  margin: 0 auto 12px;
+}
+
+.editor-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #3b4f6d;
+  border-radius: 8px;
+  background: rgba(13, 20, 32, 0.78);
+  color: #b9c8dc;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.editor-back-link::before {
+  content: "\2190";
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 160ms ease;
+}
+
+.editor-back-link:hover {
+  border-color: #6aa1ff;
+  background: #1b2a42;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.editor-back-link:hover::before {
+  transform: translateX(-2px);
+}
+
+.editor-back-link:focus-visible {
+  outline: 2px solid #78a9ef;
+  outline-offset: 3px;
+}
+
 .write-page {
   max-width: 780px;
   margin: 0 auto;
