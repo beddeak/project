@@ -33,6 +33,9 @@ function PostListPage() {
         setSearchText("");
         setIsSearchOpen(false);
     };
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchText])
 
     return (
         <div className="post-list-page">
