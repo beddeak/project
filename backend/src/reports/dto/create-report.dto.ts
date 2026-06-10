@@ -7,6 +7,10 @@ export class CreateReportDto {
     @IsString()
     @IsNotEmpty()
     reporterName!:string;
+    @Transform(({value}) => typeof value === 'string' ? value.trim(): value)
+    @IsString()
+    @IsNotEmpty()
+    content!:string;
     @IsIn(["post", "comment"])
     targetType!: "post" | "comment";
     @IsInt()

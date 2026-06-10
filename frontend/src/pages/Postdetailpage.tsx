@@ -16,6 +16,10 @@ function PostDetailPage() {
     const [commentText, setCommentText] = useState("");
     const [editCommentText, setEditCommentText] = useState("");
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+    const [isPostReportOpen, setIsPostReportOpen] = useState(false);
+    const [postReportReason, setPostReportReason] = useState("");
+    const [reportingCommentId, setReportingCommentId] = useState<number | null>(null);
+    const [commentReportReason, setCommentReportReason] = useState("");
 
     if (!authcontext) return <p>오류가 발생하였습니다</p>;
     if (!context) return <p>글을 찾을수가없습니다</p>;
@@ -39,7 +43,76 @@ function PostDetailPage() {
     const canManage = isAuthor || isAdmin;
     const likeCount = post.likedUserIds.length;
     const isLiked = user ? post.likedUserIds.includes(user.id) : false;
+    const handleReportPost = async () => {
+        if (!user) {
+            alert("로그인 부탁드립니다")
+            return;
+        }
+        const reason = postReportReason.trim();
 
+        if (!reason) {
+            alert("신고 사유를 입력해주세요");
+            return;
+        }
+        const respone = await fetch("http://localhost:3000/reports", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                reporterId:user.id,
+                reporterName:user.name,
+                content: post.content,
+                targetType:"post",
+                targetId: post.id,
+                postId: post.id,
+                targetTitle: post.title,
+                reason: reason.trim(),
+            }),
+        })
+        if (!respone.ok) {
+            alert("신고에 실패했습니다")
+            return;
+        }
+        alert("신고가 접수되었습니다")
+        setPostReportReason("");
+        setIsPostReportOpen(false);
+    }
+    const handleReportComment = async(commentId: number, content: string) => {
+        if (!user) {
+            alert("로그인하세요")
+            return;
+        }
+        const reason = commentReportReason.trim();
+
+        if (!reason) {
+            alert("신고 사유를 입력해주세요");
+            return;
+        }
+        const respone = await fetch("http://localhost:3000/reports", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            reporterId:user.id,
+            reporterName:user.name,
+            content,
+            targetType:"comment",
+            targetId: commentId,
+            postId: post.id,
+            targetTitle: post.title,
+            reason: reason.trim(),
+        })
+    })
+    if (!respone.ok) {
+        alert("신고에 실패했습니다")
+        return;
+    }
+    alert("신고가 접수되었습니다")
+    setCommentReportReason("");
+    setReportingCommentId(null);
+}
     const handleDelete = async () => {
         if (!confirm("글을 삭제하시겠습니까?")) return;
 
@@ -111,6 +184,36 @@ function PostDetailPage() {
                 <button onClick={handleLike}>
                     {isLiked ? "❤️좋아요" : "♡좋아요"} {likeCount}</button>
             </div>
+            <div className="report-button">
+                <button
+                    className="post-report-button"
+                    onClick={() => setIsPostReportOpen((isOpen) => !isOpen)}
+                >
+                    게시글 신고
+                </button>
+                {isPostReportOpen && (
+                    <div className="report-form">
+                        <label htmlFor="post-report-reason">게시글 신고 사유</label>
+                        <textarea
+                            id="post-report-reason"
+                            value={postReportReason}
+                            onChange={(e) => setPostReportReason(e.target.value)}
+                            placeholder="신고 사유를 입력해주세요."
+                        />
+                        <div className="report-form__actions">
+                            <button onClick={handleReportPost}>신고 접수</button>
+                            <button
+                                onClick={() => {
+                                    setIsPostReportOpen(false);
+                                    setPostReportReason("");
+                                }}
+                            >
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
             {canManage && (
                 <div className="detail-actions">
                     <Link to={`/posts/${post.id}/edit`}>글 수정</Link>
@@ -157,8 +260,22 @@ function PostDetailPage() {
                                     <div className="comment-view">
                                         <p>댓글: {comment.content}</p>
 
-                                        {canManageComment && (
-                                            <div className="comment-actions">
+                                        <div className="comment-actions">
+                                            <button
+                                                className="comment-report-button"
+                                                onClick={() => {
+                                                    setReportingCommentId(
+                                                        reportingCommentId === comment.id
+                                                            ? null
+                                                            : comment.id
+                                                    );
+                                                    setCommentReportReason("");
+                                                }}
+                                            >
+                                                댓글 신고
+                                            </button>
+                                            {canManageComment && (
+                                                <>
                                                 <button
                                                     onClick={() =>
                                                         handleStartEditComment(
@@ -176,6 +293,42 @@ function PostDetailPage() {
                                                 >
                                                     삭제
                                                 </button>
+                                                </>
+                                            )}
+                                        </div>
+                                        {reportingCommentId === comment.id && (
+                                            <div className="report-form comment-report-form">
+                                                <label htmlFor={`comment-report-reason-${comment.id}`}>
+                                                    댓글 신고 사유
+                                                </label>
+                                                <textarea
+                                                    id={`comment-report-reason-${comment.id}`}
+                                                    value={commentReportReason}
+                                                    onChange={(e) =>
+                                                        setCommentReportReason(e.target.value)
+                                                    }
+                                                    placeholder="신고 사유를 입력해주세요."
+                                                />
+                                                <div className="report-form__actions">
+                                                    <button
+                                                        onClick={() =>
+                                                            handleReportComment(
+                                                                comment.id,
+                                                                comment.content
+                                                            )
+                                                        }
+                                                    >
+                                                        신고 접수
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setReportingCommentId(null);
+                                                            setCommentReportReason("");
+                                                        }}
+                                                    >
+                                                        취소
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                     </div>

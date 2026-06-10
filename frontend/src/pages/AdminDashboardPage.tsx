@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import CommentContext from "../context/commentContext";
@@ -50,8 +50,24 @@ function StatusIcon({ type }: { type: "post" | "comment" | "member" | "review" }
         </svg>
     );
 }
-
+type Report = {
+    id:number;
+    reporterName:string;
+    content:string;
+    targetType: "post" | "comment";
+    targetId:number;
+    targetTitle:string | null;
+    reason: string;
+    status: "pending" | "resolved" | "rejected";
+    postId:number | null
+};
 export function AdminDashBoard() {
+    const [reports,setReports] = useState<Report[]>([]);
+    useEffect(() => {
+        fetch("http://localhost:3000/reports")
+        .then((response) => response.json())
+        .then((data: Report[]) => setReports(data))
+    }, []);
     const authcontext = useContext(AuthContext);
     const commentcontext = useContext(CommentContext);
     const postcontext = useContext(PostContext);
@@ -63,11 +79,7 @@ export function AdminDashBoard() {
     const { user, logout } = authcontext;
     const { comments, deleteComment } = commentcontext;
     const { posts, deletePost } = postcontext;
-    const totalLikes = posts.reduce((sum, post) => sum + post.likedUserIds.length, 0);
     const activeAuthors = new Set(posts.map((post) => post.authorId)).size;
-    const commentsNeedingReview = comments.filter(
-        (comment) => !posts.some((post) => post.id === comment.postId),
-    ).length;
     const handlePostDelete = async (postId:number) => {
         if (!window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
             return;
@@ -80,6 +92,41 @@ export function AdminDashBoard() {
         }
 
         await deleteComment(commentId);
+    }
+    const handleReportResolve = async (reportId:number) => {
+        const response = await fetch(`http://localhost:3000/reports/${reportId}/resolve`, {
+            method: "PATCH",
+        });
+
+        if (!response.ok) {
+            alert("신고 처리에 실패했습니다.");
+            return;
+        }
+
+        const resolvedReport: Report = await response.json();
+        setReports((currentReports) =>
+            currentReports.map((report) =>
+                report.id === reportId ? resolvedReport : report
+            )
+        );
+    }
+    const handleReportDelete = async (reportId:number) => {
+        if (!window.confirm("이 신고 기록을 삭제하시겠습니까?")) {
+            return;
+        }
+
+        const response = await fetch(`http://localhost:3000/reports/${reportId}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            alert("신고 삭제에 실패했습니다.");
+            return;
+        }
+
+        setReports((currentReports) =>
+            currentReports.filter((report) => report.id !== reportId)
+        );
     }
 
     return (
@@ -115,8 +162,12 @@ export function AdminDashBoard() {
                         <span>03</span>
                         댓글 관리
                     </a>
-                    <Link className="admin-nav__item" to="/posts">
+                    <a className="admin-nav__item" href="#report-management">
                         <span>04</span>
+                        신고 관리
+                    </a>
+                    <Link className="admin-nav__item" to="/posts">
+                        <span>05</span>
                         커뮤니티로 이동
                     </Link>
                 </nav>
@@ -213,11 +264,11 @@ export function AdminDashBoard() {
                         <article className="admin-stat-card admin-stat-card--warning">
                             <StatusIcon type="review" />
                             <div>
-                                <span>REVIEW REQUIRED</span>
-                                <strong>{String(commentsNeedingReview).padStart(2, "0")}</strong>
-                                <small>검토 필요 댓글</small>
+                                <span>REPORTED CONTENT</span>
+                                <strong>{String(reports.length).padStart(2, "0")}</strong>
+                                <small>접수된 신고</small>
                             </div>
-                            <em>{totalLikes} TOTAL LIKES</em>
+                            <em>REVIEW REQUIRED</em>
                         </article>
                     </section>
 
@@ -337,6 +388,79 @@ export function AdminDashBoard() {
                                 )}
                             </div>
                         </article>
+                    </section>
+
+                    <section
+                        className="admin-panel admin-report-panel"
+                        id="report-management"
+                    >
+                        <div className="admin-panel__header">
+                            <div>
+                                <span className="admin-section-code">REPORT.04 / MANAGEMENT</span>
+                                <h2>신고 관리</h2>
+                            </div>
+                            <span className="admin-panel__count">{reports.length} REPORTS</span>
+                        </div>
+
+                        <div className="admin-report-table">
+                            <div className="admin-report-table__head">
+                                <span>REPORT ID</span>
+                                <span>신고 대상 / 신고자</span>
+                                <span>신고 사유</span>
+                                <span>상태</span>
+                                <span>관리</span>
+                            </div>
+                            {reports.length === 0 ? (
+                                <div className="admin-empty-state">
+                                    <strong>NO REPORTS YET</strong>
+                                    <span>접수된 신고가 없습니다.</span>
+                                </div>
+                            ) : (
+                                reports.map((report) => (
+                                    <div className="admin-report-row" key={report.id}>
+                                        <span className="admin-record-id">
+                                            REPORT-{String(report.id).padStart(3, "0")}
+                                        </span>
+                                        <div className="admin-report-target">
+                                            <strong>
+                                                {report.targetType === "post" ? "게시글" : "댓글"}
+                                                {" "}#{report.targetId}
+                                            </strong>
+                                            <span>신고자: {report.reporterName}</span>
+                                            {report.postId !== null && (
+                                                <Link to={`/posts/${report.postId}/detail`}>
+                                                    원본 보기 ↗
+                                                </Link>
+                                            )}
+                                        </div>
+                                        <div className="admin-report-reason">
+                                            <strong>{report.reason}</strong>
+                                            <span>{report.content}</span>
+                                        </div>
+                                        <span className={`admin-report-status admin-report-status--${report.status}`}>
+                                            {report.status === "pending" ? "대기 중" : "처리 완료"}
+                                        </span>
+                                        <div className="admin-report-actions">
+                                            <button
+                                                type="button"
+                                                className="admin-resolve-button"
+                                                disabled={report.status === "resolved"}
+                                                onClick={() => handleReportResolve(report.id)}
+                                            >
+                                                처리 완료
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="admin-danger-button"
+                                                onClick={() => handleReportDelete(report.id)}
+                                            >
+                                                삭제
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </section>
 
                     <footer className="admin-footer">

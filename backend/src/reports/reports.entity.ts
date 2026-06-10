@@ -4,24 +4,24 @@ import { Column,CreateDateColumn,Entity,PrimaryGeneratedColumn } from "typeorm";
 export class ReportEntity {
     @PrimaryGeneratedColumn()
     id!:number;
-    @Column()
+    @Column({type:"integer"})
     reporterId!:number;
-    @Column()
+    @Column({type:"varchar"})
     reporterName!:string;
-    @Column()
+    @Column({type:"varchar"})
     content!:string;
-    @Column()
+    @Column({type:"varchar"})
     targetType!: "post" | "comment";
-    @Column()
+    @Column({type:"varchar"})
     targetId!: number;
-    @Column({nullable:true})
+    @Column({ type: "integer", nullable: true })
     postId!:number | null;
-    @Column({nullable:true})
+    @Column({ type: "text", nullable: true })
     targetTitle!: string | null;
-    @Column()
+    @Column({type:"varchar"})
     reason!:string;
-    @Column({default:"pending"})
+    @Column({type:"varchar",default:"pending"})
     status!: "pending" | "resolved" | "rejected";
-    @CreateDateColumn()
+    @CreateDateColumn({type:"varchar"})
     createdAt!: Date;
 }

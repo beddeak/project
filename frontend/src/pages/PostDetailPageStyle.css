@@ -10,6 +10,7 @@
 .detail-username,
 .detail-body,
 .detail-like,
+.report-button,
 .detail-actions,
 .detail-comments {
   border-left: 1px solid #263244;
@@ -71,11 +72,16 @@
 }
 
 .detail-like,
+.report-button,
 .detail-actions {
   padding: 0 26px 20px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.report-button {
+  align-items: flex-start;
 }
 
 .detail-like button,
@@ -111,6 +117,105 @@
 .detail-comments button:hover {
   border-color: #6aa1ff;
   background: #1b2a42;
+}
+
+.post-report-button,
+.comment-report-button {
+  border-color: #8f3d50 !important;
+  background: #2a1720 !important;
+  color: #ff9aae !important;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.post-report-button::before,
+.comment-report-button::before {
+  content: "!";
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  margin-right: 7px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.post-report-button:hover,
+.comment-report-button:hover {
+  border-color: #ff6b87 !important;
+  background: #4a1e2b !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(255, 77, 112, 0.2);
+  transform: translateY(-1px);
+}
+
+.post-report-button:focus-visible,
+.comment-report-button:focus-visible {
+  outline: 2px solid #ff6b87;
+  outline-offset: 3px;
+}
+
+.comment-report-button {
+  min-height: 32px !important;
+  padding: 0 11px !important;
+  font-size: 12px !important;
+}
+
+.report-form {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #57313d;
+  border-radius: 8px;
+  background: #17131a;
+}
+
+.report-form label {
+  color: #ff9aae;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.report-form textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid #57313d;
+  border-radius: 8px;
+  outline: none;
+  background: #100e13;
+  color: #eef3fa;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.report-form textarea:focus {
+  border-color: #ff6b87;
+  box-shadow: 0 0 0 3px rgba(255, 77, 112, 0.14);
+}
+
+.report-form__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.report-form__actions button:first-child {
+  border-color: #8f3d50;
+  background: #4a1e2b;
+  color: #ffffff;
+}
+
+.comment-report-form {
+  margin-top: 12px;
 }
 
 .detail-comments {
@@ -224,6 +329,7 @@
   .detail-username,
   .detail-body,
   .detail-like,
+  .report-button,
   .detail-actions,
   .detail-comments {
     padding-left: 16px;
