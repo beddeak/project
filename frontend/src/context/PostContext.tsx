@@ -27,7 +27,7 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
             const response  = await fetch("http://localhost:3000/posts");
             const data = await response.json();
 
-            setPosts(data);
+            setPosts(data.items);
         };
 
         fetchPosts();

@@ -10,8 +10,50 @@ export class PostsService {
         @InjectRepository(PostEntity)
         private readonly postsRepository: Repository<PostEntity>,
     ) {}
-    async findAll() {
-        return await this.postsRepository.find();
+    async findAll(options?: {
+        search?:string;
+        sort?:string;
+        page?:number;
+        limit?:number;
+    }
+    ) {
+        const search = options?.search?.trim().toLowerCase() ?? "";
+        const sort = options?.sort ?? "latest";
+        const page = Math.max(options?.page ?? 1, 1);
+        const limit = Math.max(options?.limit ?? 5,1)
+        let posts = await this.postsRepository.find();
+
+        if (search) {
+            posts = posts.filter((post) => 
+                post.title.toLowerCase().includes(search) ||
+                post.content.toLowerCase().includes(search) ||
+                (post.authorName ?? "").toLowerCase().includes(search)
+            )
+        };
+        const sortedPosts = [...posts].sort((a,b) => {
+            if (sort === "latest") {
+                return b.id - a.id
+            }
+            if (sort === "oldest") {
+                return a.id - b.id
+            }
+            if (sort === "likes") {
+                return (b.likedUserIds ?? []).length - (a.likedUserIds ?? []).length;
+            }
+            return b.id - a.id
+        });
+        const total = sortedPosts.length;
+        const totalPages = Math.ceil(total / limit)
+        const startIndex = (page - 1) * limit;
+        const items = sortedPosts.slice(startIndex, startIndex + limit);
+
+        return {
+            total,
+            totalPages,
+            limit,
+            page,
+            items
+        }
     }
     async findOne(id: number): Promise<PostEntity> {
         const post = await this.postsRepository.findOne({where: {id},
