@@ -22,10 +22,19 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
     const [comments,setComments] = useState<Comment[]>([])
     useEffect(() => {
         const fetchComments = async () => {
-            const response = await fetch("http://localhost:3000/comments")
-            const data = await response.json()
+            try {
+                const response = await fetch("http://localhost:3000/comments")
 
-            setComments(data);
+                if (!response.ok) {
+                    alert("댓글을 불러오지 못했습니다")
+                    return;
+                }
+
+                const data: Comment[] = await response.json()
+                setComments(data);
+            } catch {
+                alert("댓글을 불러오는 중 오류가 발생했습니다")
+            }
         }
 
         fetchComments();
@@ -36,49 +45,71 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
         authorId:number,
         authorName:string
     ) => {
-        const response = await fetch("http://localhost:3000/comments", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                postId,
-                content,
-                authorId,
-                authorName
-            })
-        });
-        const newComment = await response.json();
+        try {
+            const response = await fetch("http://localhost:3000/comments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    postId,
+                    content,
+                    authorId,
+                    authorName
+                })
+            });
 
-        setComments(prevComment => [...prevComment, newComment]);
+            if (!response.ok) {
+                alert("댓글 작성에 실패했습니다")
+                return;
+            }
+
+            const newComment: Comment = await response.json();
+            setComments(prevComment => [...prevComment, newComment]);
+        } catch {
+            alert("댓글 작성 중 오류가 발생했습니다")
+        }
     }
     const editComment = async (
         id:number,
         content:string
     ) => {
-        const response = await fetch(`http://localhost:3000/comments/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                content
-            })
-        });
-        const edit = await response.json();
+        try {
+            const response = await fetch(`http://localhost:3000/comments/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    content
+                })
+            });
 
-        setComments(prevComment => prevComment.map(comment => comment.id === id ? edit : comment))
+            if (!response.ok) {
+                alert("댓글 수정에 실패했습니다")
+                return;
+            }
+
+            const edit: Comment = await response.json();
+            setComments(prevComment => prevComment.map(comment => comment.id === id ? edit : comment))
+        } catch {
+            alert("댓글 수정 중 오류가 발생했습니다")
+        }
     }
 
-        const deleteComment = async (id:number) => {
-        const response = await fetch(`http://localhost:3000/comments/${id}`, {
-            method: "DELETE"
-        });
-        if (!response.ok) {
-            alert("댓글 삭제에 실패했습니다")
-            return;
+    const deleteComment = async (id:number) => {
+        try {
+            const response = await fetch(`http://localhost:3000/comments/${id}`, {
+                method: "DELETE"
+            });
+            if (!response.ok) {
+                alert("댓글 삭제에 실패했습니다")
+                return;
+            }
+            setComments(prevComment => prevComment.filter(comment => comment.id !== id))
+        } catch {
+            alert("댓글 삭제 중 오류가 발생했습니다")
         }
-        setComments(prevComment => prevComment.filter(comment => comment.id !== id))
     }
 
     return (

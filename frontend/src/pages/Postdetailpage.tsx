@@ -1,9 +1,17 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PostContext from "../context/PostContext";
 import CommentContext from "../context/commentContext";
 import AuthContext from "../context/AuthContext";
 import "./PostDetailPageStyle.css";
+type Post = {
+    id:number,
+    title:string,
+    content:string,
+    authorId:number,
+    authorName:string,
+    likedUserIds: number[];
+}
 
 function PostDetailPage() {
     const navigate = useNavigate();
@@ -20,17 +28,51 @@ function PostDetailPage() {
     const [postReportReason, setPostReportReason] = useState("");
     const [reportingCommentId, setReportingCommentId] = useState<number | null>(null);
     const [commentReportReason, setCommentReportReason] = useState("");
+    const [post,setPost] = useState<Post | null>(null);
+    const [isLoading, setIsLoading] = useState(true)
+    const posts = context?.posts;
+    const postId = Number(id);
+    useEffect(() => {
+        const loadPost = async() => {
+            if (!posts) {
+                setIsLoading(false);
+                return;
+            }   
+            if (Number.isNaN(postId)) {
+                setIsLoading(false);
+                return;
+            }
+            const foundPost = posts.find(post => post.id === postId)
+            if (foundPost) {
+                setPost(foundPost)
+                setIsLoading(false)
+                return;
+            }
+            const response = await fetch(`http://localhost:3000/posts/${postId}`)
+            if (!response.ok) {
+                setPost(null)
+                setIsLoading(false)
+                return;
+
+            }
+            const data = await response.json()
+            setPost(data)
+            setIsLoading(false)
+        }
+        loadPost();
+    }, [postId, posts])
 
     if (!authcontext) return <p>오류가 발생하였습니다</p>;
     if (!context) return <p>글을 찾을수가없습니다</p>;
     if (!commentcontext) return <p>오류가 발생하였습니다</p>;
 
     const { user } = authcontext;
-    const { posts, deletePost, toggleLike } = context;
+    const { deletePost, toggleLike } = context;
     const { comments, addComment, editComment, deleteComment } = commentcontext;
 
-    const postId = Number(id);
-    const post = posts.find((post) => post.id === postId);
+    if (isLoading) {
+        return <p>글을 불러오는 중입니다</p>;
+    }
 
     if (!post) {
         return <p>글을 찾을수가없습니다</p>;
@@ -123,7 +165,11 @@ function PostDetailPage() {
         if (!user) {
             return alert("회원가입 혹은 로그인 부탁드립니다")
         }
-        await toggleLike(postId,user.id);
+        const updatedPost = await toggleLike(postId, user.id);
+
+        if (updatedPost) {
+            setPost(updatedPost);
+        }
     }
 
     const handleAddComments = async () => {

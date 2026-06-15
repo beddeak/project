@@ -8,7 +8,7 @@ export class ReportEntity {
     reporterId!:number;
     @Column({type:"varchar"})
     reporterName!:string;
-    @Column({type:"varchar"})
+    @Column({type:"text"})
     content!:string;
     @Column({type:"varchar"})
     targetType!: "post" | "comment";

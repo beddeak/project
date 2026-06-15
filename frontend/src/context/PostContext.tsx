@@ -32,7 +32,7 @@ type PostContextType = {
     addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<boolean>;
     editPost: (id:number, title:string, content:string) => Promise<void>;
     deletePost: (id:number) => Promise<void>;
-    toggleLike: (postId:number,userId:number) => Promise<void>;
+    toggleLike: (postId:number,userId:number) => Promise<Post | null>;
 }
 
 const PostContext = createContext<PostContextType | null>(null)
@@ -139,7 +139,7 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
     const toggleLike = async (
         postId:number,
         userId:number
-    ) => {
+    ): Promise<Post | null> => {
         const response = await fetch(`http://localhost:3000/posts/${postId}/like`, {
             method: "PATCH",
             headers: {
@@ -149,11 +149,18 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
                 userId
             })
         });
-        const updatedPost = await response.json();
+
+        if (!response.ok) {
+            alert("좋아요 처리에 실패했습니다");
+            return null;
+        }
+
+        const updatedPost: Post = await response.json();
         setPosts(prevPost => prevPost.map(post => (
             post.id === postId ? updatedPost : post
         )
         ));
+        return updatedPost;
     }
     return (
         <PostContext.Provider value={{posts,currentPage,total,totalPage,fetchPost,editPost,addPost,deletePost,toggleLike}}>
