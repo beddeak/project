@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Patch, Post,Delete,ParseIntPipe} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    DefaultValuePipe,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -8,8 +19,13 @@ import { ToggleLikeDto } from './dto/like-post.dto';
 export class PostsController {
     constructor(private readonly postsService: PostsService) {}
     @Get()
-    findAll() {
-        return this.postsService.findAll();
+    findAll(
+        @Query('search', new DefaultValuePipe('')) search: string,
+        @Query('sort', new DefaultValuePipe('latest')) sort: string,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+    ) {
+        return this.postsService.findAll({ search, sort, page, limit });
     }
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: number) {

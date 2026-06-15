@@ -5,7 +5,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 function PostListPage() {
     const [searchText, setSearchText] = useState("");
-    const [currentPage,setCurrentPage] = useState(1);
     const [sortType, setSortType] = useState("latest");
     const postsPerPage = 5;
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -19,33 +18,12 @@ function PostListPage() {
     }, [isSearchOpen]);
 
     if (!context) return <p>해당 글을 찾을수가없습니다</p>;
+    const { posts,totalPage,currentPage,fetchPost } = context;
 
-    const { posts } = context;
-    const normalizedSearchText = searchText.trim().toLocaleLowerCase();
-    const filteredPosts = posts.filter((post) =>
-        post.title.toLowerCase().includes(normalizedSearchText) ||
-        post.content.toLowerCase().includes(normalizedSearchText) ||
-        post.authorName.toLocaleLowerCase().includes(normalizedSearchText)
-    );
-    const sortedPosts = [...filteredPosts].sort((a, b) => {
-        if (sortType === "latest") {
-            return b.id - a.id;
-        }
-        if (sortType === "oldest") {
-            return a.id - b.id;
-        }
-        if (sortType === "likes") {
-            return b.likedUserIds.length - a.likedUserIds.length;
-        }
-        return 0;
-    });
-    const totalPage = Math.ceil(sortedPosts.length / postsPerPage);
-    const startIndex = (currentPage - 1 ) * postsPerPage;
-    const currentPosts = sortedPosts.slice(startIndex, startIndex + postsPerPage);
     const closeSearch = () => {
-        setSearchText("");
-        setCurrentPage(1);
         setIsSearchOpen(false);
+        setSearchText("");
+        fetchPost("", sortType, 1, postsPerPage);
     };
 
     return (
@@ -61,8 +39,9 @@ function PostListPage() {
                         value={sortType}
                         aria-label="게시글 정렬"
                         onChange={(e) => {
-                            setSortType(e.target.value);
-                            setCurrentPage(1);
+                            const nextSort = e.target.value
+                            setSortType(nextSort);
+                            fetchPost(searchText,nextSort, 1, postsPerPage);
                         }}
                     >
                         <option value="latest">최신순</option>
@@ -95,8 +74,9 @@ function PostListPage() {
                         ref={searchInputRef}
                         value={searchText}
                         onChange={(e) => {
-                            setSearchText(e.target.value);
-                            setCurrentPage(1);
+                            const nextSearchText = e.target.value
+                            setSearchText(nextSearchText)
+                            fetchPost(nextSearchText,sortType,1,postsPerPage);
                         }}
                         placeholder="제목, 내용, 작성자로 검색"
                         aria-label="게시글 검색"
@@ -113,11 +93,11 @@ function PostListPage() {
             )}
 
             {posts.length === 0 ? (
-                <p>작성된 글이 없습니다</p>
-            ) : filteredPosts.length === 0 ? (
-                <p className="search-empty">검색 결과가 없습니다</p>
-            ) : (
-                currentPosts.map((post) => (
+                <p className="search-empty">
+                    {searchText.trim() ? "검색 결과가 없습니다" : "작성된 글이 없습니다"}
+                </p>
+            )   : (
+               posts.map((post) => (
                     <div key={post.id} className="post-item">
                         <div className="post-title">
                             <Link to={`/posts/${post.id}/detail`}>{post.title}</Link>
@@ -141,7 +121,7 @@ function PostListPage() {
                                 className={page === currentPage ? "active" : ""}
                                 aria-label={`Page ${page}`}
                                 aria-current={page === currentPage ? "page" : undefined}
-                                onClick={() => setCurrentPage(page)}
+                                onClick={() => fetchPost(searchText,sortType,page,postsPerPage)}
                             >
                                 {page}
                             </button>

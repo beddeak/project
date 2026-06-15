@@ -21,8 +21,10 @@ function PostCreatePage() {
     }
 
     const handleWrite = async (title: string, content: string,) => {
-        await addPost(title, content,user.id, user.name);
-        navigate("/posts")
+        const created = await addPost(title, content,user.id, user.name);
+        if (created) {
+            navigate("/posts")
+        }
     };
 
     return (

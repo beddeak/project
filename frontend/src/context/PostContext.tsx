@@ -1,4 +1,4 @@
-import {  createContext,useEffect,useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 
 type Post = {
     id:number;
@@ -29,7 +29,7 @@ type PostContextType = {
         page?:number,
         limit?:number
     ) => Promise<void>;
-    addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<void>;
+    addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<boolean>;
     editPost: (id:number, title:string, content:string) => Promise<void>;
     deletePost: (id:number) => Promise<void>;
     toggleLike: (postId:number,userId:number) => Promise<void>;
@@ -43,34 +43,40 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
     const [total, setTotal] = useState(0);
     const [totalPage, setTotalPage] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-    useEffect(() => {
-        fetchPost();
-    }     , []);
-    const fetchPost = async (
+    const latestFetchRequest = useRef(0);
+
+    const fetchPost = useCallback(async (
         search = "",
         sort = "latest",
         page = 1,
         limit = 5
     ) => {
+        const requestId = ++latestFetchRequest.current;
         const query = new URLSearchParams({
             search,
             sort,
             page: String(page),
             limit: String(limit),
         });
-        const respone = await fetch(`http://localhost:3000/posts?${query.toString()}`);
+        const response = await fetch(`http://localhost:3000/posts?${query.toString()}`);
 
-        if (!respone.ok) {
+        if (!response.ok) {
             alert("게시글을 불러오지 못했습니다")
             return; 
         }
-        const data: PostResponse = await respone.json();
+        const data: PostResponse = await response.json();
+
+        if (requestId !== latestFetchRequest.current) return;
 
         setPosts(data.items);
         setTotal(data.total);
         setTotalPage(data.totalPages);
         setCurrentPage(data.page);
-    }
+    }, []);
+
+    useEffect(() => {
+        void Promise.resolve().then(() => fetchPost());
+    }, [fetchPost]);
     
      const addPost = async (
         title:string,
@@ -90,9 +96,13 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
                 authorName
             })
         });
-        const newPost = await response.json();
+        if (!response.ok) {
+            alert("게시글 작성에 실패했습니다");
+            return false;
+        }
 
-        setPosts(prevPosts => [...prevPosts, newPost]);
+        await fetchPost("", "latest", 1, 5);
+        return true;
      };
     const editPost = async (
         id:number,
@@ -124,7 +134,7 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
             return;
         }
 
-        setPosts(prevPost => prevPost.filter(post => post.id !== id))
+        await fetchPost("", "latest", 1, 5)
     }
     const toggleLike = async (
         postId:number,
