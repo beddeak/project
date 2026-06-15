@@ -9,8 +9,26 @@ type Post = {
     likedUserIds: number[];
 }
 
+
+type PostResponse = {
+    items: Post[];
+    total: number;
+    totalPages: number;
+    page: number;
+    limit: number;
+}
+
 type PostContextType = {
     posts: Post[]
+    total:number;
+    totalPage:number;
+    currentPage:number;
+    fetchPost: (
+        search?: string,
+        sort?:string,
+        page?:number,
+        limit?:number
+    ) => Promise<void>;
     addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<void>;
     editPost: (id:number, title:string, content:string) => Promise<void>;
     deletePost: (id:number) => Promise<void>;
@@ -21,17 +39,38 @@ const PostContext = createContext<PostContextType | null>(null)
 
 
 export function PostContextProvider({children}: {children: React.ReactNode}) {
-    const [posts, setPosts] = useState<Post[]>([])
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [total, setTotal] = useState(0);
+    const [totalPage, setTotalPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
     useEffect(() => {
-        const fetchPosts = async () => {
-            const response  = await fetch("http://localhost:3000/posts");
-            const data = await response.json();
+        fetchPost();
+    }     , []);
+    const fetchPost = async (
+        search = "",
+        sort = "latest",
+        page = 1,
+        limit = 5
+    ) => {
+        const query = new URLSearchParams({
+            search,
+            sort,
+            page: String(page),
+            limit: String(limit),
+        });
+        const respone = await fetch(`http://localhost:3000/posts?${query.toString()}`);
 
-            setPosts(data.items);
-        };
+        if (!respone.ok) {
+            alert("게시글을 불러오지 못했습니다")
+            return; 
+        }
+        const data: PostResponse = await respone.json();
 
-        fetchPosts();
-    }, []);
+        setPosts(data.items);
+        setTotal(data.total);
+        setTotalPage(data.totalPages);
+        setCurrentPage(data.page);
+    }
     
      const addPost = async (
         title:string,
@@ -107,7 +146,7 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
         ));
     }
     return (
-        <PostContext.Provider value={{posts,editPost,addPost,deletePost,toggleLike}}>
+        <PostContext.Provider value={{posts,currentPage,total,totalPage,fetchPost,editPost,addPost,deletePost,toggleLike}}>
             {children}
         </PostContext.Provider>
     )
