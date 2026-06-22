@@ -5,11 +5,11 @@ import "./LoginPage.css";
 
 function LoginPage() {
     const navigate = useNavigate();
+    const [username,setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const context = useContext(AuthContext)
     if (!context) return (<p>회원정보를 찾을수가없습니다</p>)
     const { login } = context;
-    const [username,setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const handleLogin = async () => {
         if (!username.trim()) {
             alert("아이디를 입력해주세요")

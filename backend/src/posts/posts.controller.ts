@@ -10,10 +10,21 @@ import {
     Post,
     Query,
 } from '@nestjs/common';
+import { UseGuards,Req } from '@nestjs/common';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/JwTAuth.guard';
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ToggleLikeDto } from './dto/like-post.dto';
+
+type AuthenticatedRequest = Request & {
+    user: {
+        sub:number;
+        email:string;
+        role:'user' | 'admin';
+    }
+}
 
 @Controller('posts')
 export class PostsController {
@@ -31,13 +42,14 @@ export class PostsController {
     findOne(@Param('id', ParseIntPipe) id: number) {
         return this.postsService.findOne(id);
     }
+    @UseGuards(JwtAuthGuard)
     @Post()
-    create(@Body() body: CreatePostDto) {
+    create(@Req() req:AuthenticatedRequest, @Body() body: CreatePostDto) {
         return this.postsService.create(
             body.title,
             body.content,
-            body.authorId,
-            body.authorName,
+            req.user.sub,
+            body.authorName
         );
     }
     @Patch(':id')

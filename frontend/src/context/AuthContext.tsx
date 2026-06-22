@@ -5,7 +5,14 @@ type Role = "admin" | "user";
 type user = {
     id:number;
     name:string;
+    username?:string;
+    email?:string;
     role:Role;
+}
+
+type LoginResponse = {
+    accessToken: string;
+    user: user;
 }
 
 type AuthContextType = {
@@ -36,16 +43,18 @@ export function AuthContextProvider({children}: {children: React.ReactNode}) {
         if (!respone.ok) {
             return false;
         }
-        const loginUser = await respone.json()
+        const data: LoginResponse = await respone.json()
 
-        setUser(loginUser);
-        localStorage.setItem("user", JSON.stringify(loginUser));
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("accessToken", data.accessToken);
 
         return true;
     };
     const logout = () => {
         setUser(null);
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
     }
 
     return  (
