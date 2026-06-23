@@ -23,6 +23,7 @@ type AuthenticatedRequest = Request & {
         sub:number;
         email:string;
         role:'user' | 'admin';
+        name:string;
     }
 }
 
@@ -49,30 +50,39 @@ export class PostsController {
             body.title,
             body.content,
             req.user.sub,
-            body.authorName
+            req.user.name,
         );
     }
+    @UseGuards(JwtAuthGuard)
     @Patch(':id')
-    edit(@Param('id', ParseIntPipe) id:number,@Body() body: UpdatePostDto) {
+    edit(@Req() req:AuthenticatedRequest,@Param('id', ParseIntPipe) id:number,@Body() body: UpdatePostDto) {
         
         return this.postsService.edit(
             id,
             body.title,
             body.content,
-        )
+            req.user.sub,
+            req.user.role,
+        );
     }
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
-    remove(@Param('id', ParseIntPipe) id:number) {
+    remove(@Req() req:AuthenticatedRequest,@Param('id', ParseIntPipe) id:number) {
 
 
-        return this.postsService.remove(id)
+        return this.postsService.remove(
+            id,
+            req.user.sub,
+            req.user.role,
+        );
     }
+    @UseGuards(JwtAuthGuard)
     @Patch(':id/like')
-    toggleLike(@Param('id', ParseIntPipe) id: number, @Body() body: ToggleLikeDto) {
+    toggleLike(@Req() req:AuthenticatedRequest,@Param('id', ParseIntPipe) id: number, @Body() body: ToggleLikeDto) {
 
         return this.postsService.toggleLike(
             id,
-            body.userId
+            req.user.sub
         )
     }
 }

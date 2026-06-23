@@ -29,7 +29,7 @@ type PostContextType = {
         page?:number,
         limit?:number
     ) => Promise<void>;
-    addPost: (title:string, content:string, authorId:number, authorName:string) => Promise<boolean>;
+    addPost: (title:string, content:string) => Promise<boolean>;
     editPost: (id:number, title:string, content:string) => Promise<void>;
     deletePost: (id:number) => Promise<void>;
     toggleLike: (postId:number,userId:number) => Promise<Post | null>;
@@ -80,20 +80,18 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
     
      const addPost = async (
         title:string,
-        content:string,
-        authorId:number,
-        authorName: string
+        content:string
      ) => {
+        const token = localStorage.getItem("accessToken")
         const response = await fetch("http://localhost:3000/posts", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
                 title,
-                content,
-                authorId,
-                authorName
+                content
             })
         });
         if (!response.ok) {
@@ -109,10 +107,13 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
         title:string,
         content:string
     ) => {
+        const token = localStorage.getItem("accessToken")
         const response = await fetch(`http://localhost:3000/posts/${id}`, {
             method: "PATCH",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+
             },
             body: JSON.stringify({
                 title,
@@ -126,8 +127,12 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
     const deletePost = async (
         id:number
     ) => {
+        const token = localStorage.getItem("accessToken")
         const response = await fetch(`http://localhost:3000/posts/${id}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
         if (!response.ok) {
             alert("글 삭제에 실패했습니다");
@@ -138,16 +143,13 @@ export function PostContextProvider({children}: {children: React.ReactNode}) {
     }
     const toggleLike = async (
         postId:number,
-        userId:number
     ): Promise<Post | null> => {
+        const token = localStorage.getItem("accessToken")
         const response = await fetch(`http://localhost:3000/posts/${postId}/like`, {
             method: "PATCH",
             headers: {
-                "Content-Type": "application/json"
+                Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({
-                userId
-            })
         });
 
         if (!response.ok) {

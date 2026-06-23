@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PostEntity } from './posts.entity';
@@ -77,16 +77,22 @@ export class PostsService {
         return await this.postsRepository.save(newPost);
 
     }
-    async edit(id:number,title:string,content:string): Promise<PostEntity> {
+    async edit(id:number,title:string,content:string, userId:number,role: 'user' | 'admin'): Promise<PostEntity> {
         const post = await this.findOne(id);
+        if (post.authorId !== userId && role !== 'admin') {
+            throw new ForbiddenException('수정 권한이 없습니다')
+        }
 
         post.title = title;
         post.content = content;
 
         return await this.postsRepository.save(post)
     }
-    async remove(id:number): Promise<PostEntity> {
+    async remove(id:number,userId:number,role:'user' | 'admin'): Promise<PostEntity> {
         const post = await this.findOne(id)
+        if (post.authorId !== userId && role !== 'admin') {
+            throw new ForbiddenException('삭제 권한이 없습니다')
+        }
 
         await this.postsRepository.remove(post);
 

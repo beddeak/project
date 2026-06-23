@@ -11,12 +11,4 @@ export class CreatePostDto {
     @IsString()
     @IsNotEmpty()
     content!:string
-
-    @IsInt()
-    authorId!:number
-
-    @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
-    @IsString()
-    @IsNotEmpty()
-    authorName!:string
 }

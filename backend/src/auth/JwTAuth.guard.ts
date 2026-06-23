@@ -1,13 +1,13 @@
 import {CanActivate,ExecutionContext,Injectable,UnauthorizedException} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 
 
 type JwtPayload = {
     sub: number;
     email:string;
     role:'user' | 'admin';
+    name:string;
 }
 
 type AuthenticatedRequest = Request & {
@@ -27,7 +27,7 @@ export class JwtAuthGuard implements CanActivate {
             throw new UnauthorizedException("로그인이 필요합니다")
         }
 
-        const [type, token] = authHeader.split('');
+        const [type, token] = authHeader.split(' ');
 
         if (type !== 'Bearer' || !token) {
             throw new UnauthorizedException("올바르지 않은 인증 형식입니다")
