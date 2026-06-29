@@ -3,6 +3,7 @@ import { ReportsService } from "./reports.service";
 import { CreateReportDto } from "./dto/create-report.dto";
 import { JwtAuthGuard } from "src/auth/JwTAuth.guard";
 import { Request } from "express";
+import { AdminGuard } from "src/auth/admin.guard";
 
 type AuthenticatedRequest = Request & {
     user: {
@@ -17,12 +18,12 @@ type AuthenticatedRequest = Request & {
 export class ReportsController {
     constructor(private readonly reportsService: ReportsService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Get()
     findAll() {
         return this.reportsService.findAll();
     }
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Post()
     create(@Req() req:AuthenticatedRequest,@Body() body: CreateReportDto) {
         return this.reportsService.create(
@@ -31,12 +32,12 @@ export class ReportsController {
             req.user.name,
         );
     }
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Patch(':id/resolve')
     resolve(@Param("id", ParseIntPipe) id:number) {
         return this.reportsService.resolve(id);
     }
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Delete(":id")
     remove(@Param("id", ParseIntPipe) id:number) {
         return this.reportsService.remove(id);

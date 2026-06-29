@@ -94,8 +94,12 @@ export function AdminDashBoard() {
         await deleteComment(commentId);
     }
     const handleReportResolve = async (reportId:number) => {
+        const token = localStorage.getItem("accessToken")
         const response = await fetch(`http://localhost:3000/reports/${reportId}/resolve`, {
             method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
@@ -114,9 +118,12 @@ export function AdminDashBoard() {
         if (!window.confirm("이 신고 기록을 삭제하시겠습니까?")) {
             return;
         }
-
+        const token = localStorage.getItem("accessToken")
         const response = await fetch(`http://localhost:3000/reports/${reportId}`, {
             method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
