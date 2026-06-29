@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { UseGuards,Req } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/JwTAuth.guard';
+import { JwtAuthGuard } from '../auth/JwTAuth.guard';
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
-import { ToggleLikeDto } from './dto/like-post.dto';
+
 
 type AuthenticatedRequest = Request & {
     user: {
@@ -78,7 +78,7 @@ export class PostsController {
     }
     @UseGuards(JwtAuthGuard)
     @Patch(':id/like')
-    toggleLike(@Req() req:AuthenticatedRequest,@Param('id', ParseIntPipe) id: number, @Body() body: ToggleLikeDto) {
+    toggleLike(@Req() req:AuthenticatedRequest,@Param('id', ParseIntPipe) id: number) {
 
         return this.postsService.toggleLike(
             id,

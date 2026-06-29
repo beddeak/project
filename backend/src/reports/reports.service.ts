@@ -17,17 +17,18 @@ export class ReportsService {
             },
         });
     }
-    create(body:CreateReportDto) {
+    create(body:CreateReportDto,reporterId:number,reporterName:string) {
         const report = this.ReportRepository.create({
-            reporterId: body.reporterId,
-            reporterName: body.reporterName,
+            reporterId,
+            reporterName,
             content: body.content,
             targetType: body.targetType,
             targetId: body.targetId,
             postId: body.postId,
             targetTitle: body.targetTitle,
             reason: body.reason
-        });
+        }
+    );
 
         return this.ReportRepository.save(report);
     }

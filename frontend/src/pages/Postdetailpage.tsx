@@ -96,14 +96,14 @@ function PostDetailPage() {
             alert("신고 사유를 입력해주세요");
             return;
         }
+        const token = localStorage.getItem("accessToken")
         const respone = await fetch("http://localhost:3000/reports", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                reporterId:user.id,
-                reporterName:user.name,
                 content: post.content,
                 targetType:"post",
                 targetId: post.id,
@@ -131,14 +131,14 @@ function PostDetailPage() {
             alert("신고 사유를 입력해주세요");
             return;
         }
+        const token = localStorage.getItem("accessToken")
         const respone = await fetch("http://localhost:3000/reports", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-            reporterId:user.id,
-            reporterName:user.name,
             content,
             targetType:"comment",
             targetId: commentId,
@@ -165,7 +165,7 @@ function PostDetailPage() {
         if (!user) {
             return alert("회원가입 혹은 로그인 부탁드립니다")
         }
-        const updatedPost = await toggleLike(postId, user.id);
+        const updatedPost = await toggleLike(postId);
 
         if (updatedPost) {
             setPost(updatedPost);
@@ -181,7 +181,7 @@ function PostDetailPage() {
             return alert("댓글을 입력하세요");
         }
 
-        await addComment(postId, commentText.trim(), user.id, user.name);
+        await addComment(postId, commentText.trim());
         setCommentText("");
     };
 

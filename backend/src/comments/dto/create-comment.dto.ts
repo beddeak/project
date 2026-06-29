@@ -9,12 +9,4 @@ export class CreateCommentDto {
     @IsNotEmpty()
     @IsString()
     content!:string
-
-    @IsInt()
-    authorId!:number
-
-    @Transform(({value}) => typeof value === 'string' ? value.trim(): value)
-    @IsNotEmpty()
-    @IsString()
-    authorName!:string
 }

@@ -2,11 +2,6 @@ import { Transform } from "class-transformer";
 import { IsInt,IsString,IsNotEmpty,IsIn, IsOptional } from "class-validator";
 
 export class CreateReportDto {
-    @IsInt()
-    reporterId!:number;
-    @IsString()
-    @IsNotEmpty()
-    reporterName!:string;
     @Transform(({value}) => typeof value === 'string' ? value.trim(): value)
     @IsString()
     @IsNotEmpty()

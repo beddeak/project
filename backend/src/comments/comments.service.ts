@@ -1,4 +1,4 @@
-    import { Injectable, NotFoundException } from '@nestjs/common';
+    import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
     import { InjectRepository } from '@nestjs/typeorm';
     import { CommentsEntity } from './comments.entity';
     import { Repository } from 'typeorm';
@@ -39,16 +39,21 @@
             });
             return await this.commentsRepository.save(comment);
         }
-        async edit(id:number, content:string): Promise<CommentsEntity> {
+        async edit(id:number, content:string,userId:number, role:'user' | 'admin'): Promise<CommentsEntity> {
             const comment = await this.findOne(id)
-
+            if (comment.authorId !== userId && role !== 'admin') {
+                throw new ForbiddenException('댓글 수정 권한이 없습니다')
+            }
             comment.content = content;
 
             return await this.commentsRepository.save(comment);
         }
 
-        async remove(id: number): Promise<CommentsEntity> {
+        async remove(id: number,userId:number,role:'user' | 'admin'): Promise<CommentsEntity> {
             const comment = await this.findOne(id);
+            if(comment.authorId !== userId && role !== 'admin') {
+                throw new ForbiddenException('댓글 삭제 권한이 없습니다')
+            }
 
             await this.commentsRepository.remove(comment);
 

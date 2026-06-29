@@ -1,7 +1,18 @@
-import { Body, Controller,Delete,Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller,Delete,Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/JwTAuth.guard';
+
+type AuthenticatedRequest = Request & {
+    user: {
+        sub:number;
+        email:string;
+        role: 'user' | 'admin';
+        name:string;
+    }
+}
 
 @Controller('comments')
 export class CommentsController {
@@ -18,26 +29,35 @@ export class CommentsController {
         findOne(@Param('id', ParseIntPipe) id: number) {
             return this.commentService.findOne(id)
         }
+        @UseGuards(JwtAuthGuard)
         @Post()
-        create(@Body() body: CreateCommentDto) {
+        create(@Req() req:AuthenticatedRequest,@Body() body: CreateCommentDto) {
             return this.commentService.create(
                 body.postId,
                 body.content,
-                body.authorId,
-                body.authorName
+                req.user.sub,
+                req.user.name
             );
         }
+        @UseGuards(JwtAuthGuard)
         @Patch(':id')
-        edit(@Param('id', ParseIntPipe) id:number, @Body() body: UpdateCommentDto) {
+        edit(@Req() req: AuthenticatedRequest,@Param('id', ParseIntPipe) id:number, @Body() body: UpdateCommentDto) {
             
             return this.commentService.edit(
                 id,
-                body.content
+                body.content,
+                req.user.sub,
+                req.user.role
             )
         }
+        @UseGuards(JwtAuthGuard)
         @Delete(':id')
-        remove(@Param('id', ParseIntPipe) id: number) {
+        remove(@Req() req:AuthenticatedRequest,@Param('id', ParseIntPipe) id: number) {
 
-            return this.commentService.remove(id)
+            return this.commentService.remove(
+                id,
+                req.user.sub,
+                req.user.role
+            )
         }
 }

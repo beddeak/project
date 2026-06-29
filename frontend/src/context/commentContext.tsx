@@ -9,7 +9,7 @@ type Comment = {
 
 type CommentContextType = {
     comments: Comment[]; 
-    addComment: (postId:number,content:string,authorId:number,authorName:string) => Promise<void>;
+    addComment: (postId:number,content:string) => Promise<void>;
     deleteComment: (id:number) => Promise<void>;
     editComment: (id:number, content:string) => Promise<void>;
 
@@ -41,21 +41,19 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
     }, []);
     const addComment = async (
         postId:number,
-        content:string,
-        authorId:number,
-        authorName:string
+        content:string
     ) => {
         try {
+            const token = localStorage.getItem("accessToken")
             const response = await fetch("http://localhost:3000/comments", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     postId,
-                    content,
-                    authorId,
-                    authorName
+                    content
                 })
             });
 
@@ -75,10 +73,12 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
         content:string
     ) => {
         try {
+            const token = localStorage.getItem("accessToken")
             const response = await fetch(`http://localhost:3000/comments/${id}`, {
                 method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     content
@@ -99,8 +99,12 @@ export function CommentContextProvider({children}: {children: React.ReactNode}) 
 
     const deleteComment = async (id:number) => {
         try {
+            const token = localStorage.getItem("accessToken")
             const response = await fetch(`http://localhost:3000/comments/${id}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             if (!response.ok) {
                 alert("댓글 삭제에 실패했습니다")

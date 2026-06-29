@@ -32,7 +32,7 @@ type PostContextType = {
     addPost: (title:string, content:string) => Promise<boolean>;
     editPost: (id:number, title:string, content:string) => Promise<void>;
     deletePost: (id:number) => Promise<void>;
-    toggleLike: (postId:number,userId:number) => Promise<Post | null>;
+    toggleLike: (postId:number) => Promise<Post | null>;
 }
 
 const PostContext = createContext<PostContextType | null>(null)
