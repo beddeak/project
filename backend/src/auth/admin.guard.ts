@@ -3,7 +3,6 @@ import { CanActivate,
     ForbiddenException,
     Injectable } from "@nestjs/common";
 import { Request } from "express";
-import { Observable } from "rxjs";
 
 type AuthenticatedRequest = Request & {
     user?: {

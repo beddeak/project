@@ -3,7 +3,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/JwTAuth.guard';
+import { JwtAuthGuard } from '../auth/JwTAuth.guard';
 
 type AuthenticatedRequest = Request & {
     user: {

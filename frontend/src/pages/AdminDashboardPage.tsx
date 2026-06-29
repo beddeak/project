@@ -64,9 +64,24 @@ type Report = {
 export function AdminDashBoard() {
     const [reports,setReports] = useState<Report[]>([]);
     useEffect(() => {
-        fetch("http://localhost:3000/reports")
-        .then((response) => response.json())
-        .then((data: Report[]) => setReports(data))
+        const fetchReports = async () => {
+            const token = localStorage.getItem("accessToken");
+            const response = await fetch("http://localhost:3000/reports", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                alert("신고 목록을 불러오지 못했습니다.");
+                return;
+            }
+
+            const data: Report[] = await response.json();
+            setReports(data);
+        };
+
+        fetchReports();
     }, []);
     const authcontext = useContext(AuthContext);
     const commentcontext = useContext(CommentContext);

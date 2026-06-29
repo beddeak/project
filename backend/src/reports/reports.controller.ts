@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards,Req } from "@nestjs/common";
 import { ReportsService } from "./reports.service";
 import { CreateReportDto } from "./dto/create-report.dto";
-import { JwtAuthGuard } from "src/auth/JwTAuth.guard";
+import { JwtAuthGuard } from "../auth/JwTAuth.guard";
 import { Request } from "express";
-import { AdminGuard } from "src/auth/admin.guard";
+import { AdminGuard } from "../auth/admin.guard";
 
 type AuthenticatedRequest = Request & {
     user: {
@@ -23,7 +23,7 @@ export class ReportsController {
     findAll() {
         return this.reportsService.findAll();
     }
-    @UseGuards(JwtAuthGuard, AdminGuard)
+    @UseGuards(JwtAuthGuard)
     @Post()
     create(@Req() req:AuthenticatedRequest,@Body() body: CreateReportDto) {
         return this.reportsService.create(
